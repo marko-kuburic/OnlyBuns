@@ -10,4 +10,5 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
     // You can define custom query methods here if needed
     List<Post> findByUserId(Long userId);
+    List<Post> findByLocationId(Long locationId);
 }
