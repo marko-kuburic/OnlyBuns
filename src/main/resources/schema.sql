@@ -88,8 +88,8 @@ INSERT INTO locations (name, address, latitude, longitude, service_type) VALUES
                                                                              ('Happy Vet Clinic', '456 Carrot Blvd', 34.052235, -118.243683, 'veterinarian');
 
 INSERT INTO posts (user_id, location_id, content, image_data) VALUES
-                                                                  (1, 1, 'Content of the first post', '\\x89504E470D0A1A0A...'), -- placeholder binary data
-                                                                  (2, 2, 'Content of the second post', '\\x89504E470D0A1A0A...');
+                                                                  (1, 1, 'Content of the first post', decode('89504E470D0A1A0A', 'hex')), -- placeholder binary data
+                                                                  (2, 2, 'Content of the second post', decode('89504E470D0A1A0A', 'hex'));
 
 INSERT INTO comments (post_id, user_id, content) VALUES
                                                      (1, 2, 'Great post!'),
