@@ -2,6 +2,7 @@ package rs.ac.uns.ftn.onlybuns.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @Entity
 @Table(name = "posts")
@@ -11,15 +12,13 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId; // Changed to store user ID directly
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "location_id")
-    private Location location;
+    @Column(name = "location_id")
+    private Long locationId; // Changed to store location ID directly
 
-    @Lob
+    //@Lob
     @Column(name = "image_data", nullable = false)
     private byte[] imageData;
 
@@ -41,9 +40,9 @@ public class Post {
     // Constructors
     public Post() {}
 
-    public Post(User user, Location location, byte[] imageData, String content, LocalDateTime createdAt) {
-        this.user = user;
-        this.location = location;
+    public Post(Long userId, Long locationId, byte[] imageData, String content, LocalDateTime createdAt) {
+        this.userId = userId;
+        this.locationId = locationId;
         this.imageData = imageData;
         this.content = content;
         this.createdAt = createdAt;
@@ -51,13 +50,29 @@ public class Post {
         this.commentsCount = 0;
     }
 
-// Getters and Setters
+    // Getters and Setters
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Long getLocationId() {
+        return locationId;
+    }
+
+    public void setLocationId(Long locationId) {
+        this.locationId = locationId;
     }
 
     public String getContent() {
@@ -76,11 +91,50 @@ public class Post {
         this.createdAt = createdAt;
     }
 
-    public User getUser() {
-        return user;
+    public byte[] getImageData() {
+        return imageData;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setImageData(byte[] imageData) {
+        this.imageData = imageData;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public int getLikesCount() {
+        return likesCount;
+    }
+
+    public void setLikesCount(int likesCount) {
+        this.likesCount = likesCount;
+    }
+
+    public int getCommentsCount() {
+        return commentsCount;
+    }
+
+    public void setCommentsCount(int commentsCount) {
+        this.commentsCount = commentsCount;
+    }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", locationId=" + locationId +
+                ", imageData=" + Arrays.toString(imageData) +
+                ", content='" + content + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", likesCount=" + likesCount +
+                ", commentsCount=" + commentsCount +
+                '}';
     }
 }
