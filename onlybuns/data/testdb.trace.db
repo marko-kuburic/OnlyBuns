@@ -1,0 +1,6 @@
+2024-11-05 12:51:09.469386+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "INSERT INTO posts (user_id, location_id, content, image_data) VALUES (1, 1, 'Content of the first post', decode('89504E470D0A1A0A', 'hex'[*])), (2, 2, 'Content of the second post', decode('89504E470D0A1A0A', 'hex'))"; expected "[, ., ::, AT, FORMAT, *, /, %, +, -, ||, NOT, IS, ILIKE, REGEXP, AND, OR, ,"; SQL statement:
+INSERT INTO posts (user_id, location_id, content, image_data) VALUES (1, 1, 'Content of the first post', decode('89504E470D0A1A0A', 'hex')), (2, 2, 'Content of the second post', decode('89504E470D0A1A0A', 'hex')) [42001-224]
+2024-11-05 12:57:17.178862+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "INSERT INTO posts (user_id, location_id, content, image_data) VALUES (1, 1, 'Content of the first post', decode('89504E470D0A1A0A', 'hex'[*])), (2, 2, 'Content of the second post', decode('89504E470D0A1A0A', 'hex'))"; expected "[, ., ::, AT, FORMAT, *, /, %, +, -, ||, NOT, IS, ILIKE, REGEXP, AND, OR, ,"; SQL statement:
+INSERT INTO posts (user_id, location_id, content, image_data) VALUES (1, 1, 'Content of the first post', decode('89504E470D0A1A0A', 'hex')), (2, 2, 'Content of the second post', decode('89504E470D0A1A0A', 'hex')) [42001-224]
