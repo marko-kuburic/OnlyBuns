@@ -1,23 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PostForm from './components/PostForm';
 import PostList from './components/PostList';
+import './App.css';
 
 function App() {
-  const handlePostSubmit = (formData) => {
-    const requestBody = new FormData();
-    
-    // Append the other fields from formData
-    for (const [key, value] of formData.entries()) {
-      requestBody.append(key, value);
-    }
-  
-    // Append additional fields directly
-    requestBody.append('userId', 1); // Assuming user ID is 1; update as necessary
-    requestBody.append('locationId', 1); // Assuming location ID is 1; update as necessary
-  
+  const [posts, setPosts] = useState([]);
+
+  const fetchPosts = () => {
+    fetch('http://localhost:8080/api/posts')
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Fetched posts:', data); // Debugging line
+        setPosts(data);
+      })
+      .catch((error) => console.error('Error fetching posts:', error));
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const handlePostSubmit = (formData, resetFormCallback) => {
     fetch('http://localhost:8080/api/posts', {
       method: 'POST',
-      body: requestBody, // Directly send the FormData
+      body: formData,
     })
       .then((response) => {
         if (!response.ok) {
@@ -27,16 +33,17 @@ function App() {
       })
       .then((data) => {
         console.log('Post created:', data);
+        fetchPosts(); // Refresh posts after new post submission
+        if (resetFormCallback) resetFormCallback(); // Optionally clear form fields
       })
       .catch((error) => console.error('Error creating post:', error));
   };
-  
 
   return (
     <div className="App">
-      <h1>Post Your Rabbit</h1>
+      <h1>Share Your Rabbit Story</h1>
       <PostForm onSubmit={handlePostSubmit} />
-      <PostList />
+      <PostList posts={posts} />
     </div>
   );
 }
