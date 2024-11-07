@@ -9,7 +9,6 @@ import rs.ac.uns.ftn.onlybuns.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -23,12 +22,25 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody User user) {
-        // Set createdAt and ensure no ID is manually assigned
+    public ResponseEntity<String> registerUser(@RequestBody User user) {
+        User existingUser = userService.getUserByUsername(user.getUsername());
+        if (existingUser != null) {
+            return new ResponseEntity<>("Username already exists", HttpStatus.CONFLICT);
+        }
         user.setCreatedAt(LocalDateTime.now());
         user.setId(null); // Ensure ID is not manually set
         User createdUser = userService.saveUser(user);
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> loginUser(@RequestBody User user) {
+        User existingUser = userService.getUserByUsername(user.getUsername());
+        if (existingUser != null && existingUser.getPassword().equals(user.getPassword())) {
+            return new ResponseEntity<>("Login successful", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Invalid username or password", HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @GetMapping("/{username}")

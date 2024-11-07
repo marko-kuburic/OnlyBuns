@@ -16,6 +16,9 @@ CREATE TABLE users (
                        surname VARCHAR(32) NOT NULL,
                        followers INTEGER DEFAULT 0 NOT NULL,
                        activated BOOLEAN DEFAULT FALSE NOT NULL,
+                       is_admin BOOLEAN DEFAULT FALSE NOT NULL,
+                       activation_token VARCHAR(100),
+                       activation_expires_at TIMESTAMP,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -78,10 +81,11 @@ CREATE INDEX idx_locations_service_type ON locations(service_type);
 CREATE INDEX idx_likes_post_id ON likes(post_id);
 CREATE INDEX idx_comments_post_id ON comments(post_id);
 
--- Sample Data (Optional)
-INSERT INTO users (username, email, password, name, surname, activated) VALUES
-                                                                            ('john_doe', 'john@example.com', 'hashed_password_1', 'John', 'Doe', TRUE),
-                                                                            ('jane_smith', 'jane@example.com', 'hashed_password_2', 'Jane', 'Smith', TRUE);
+INSERT INTO users (username, email, password, name, surname, activated, is_admin, activation_token, activation_expires_at)
+VALUES
+    ('admin', 'admin@gmail.com', 'hashed_password_0', 'Admin', 'User', TRUE, TRUE, NULL, NULL),
+    ('john_doe', 'john@example.com', 'hashed_password_1', 'John', 'Doe', FALSE, FALSE, 'sample_token_123', NOW() + INTERVAL '1 day'),
+    ('jane_smith', 'jane@example.com', 'hashed_password_2', 'Jane', 'Smith', FALSE, FALSE, 'sample_token_456', NOW() + INTERVAL '1 day');
 
 INSERT INTO locations (name, address, latitude, longitude, service_type) VALUES
                                                                              ('Bunny Shelter', '123 Rabbit St', 40.712776, -74.005974, 'shelter'),

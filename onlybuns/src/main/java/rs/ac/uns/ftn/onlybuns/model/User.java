@@ -32,6 +32,15 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "activated", nullable = false)
+    private boolean activated = false;
+
+    @Column(name = "activation_token", unique = true)
+    private String activationToken;
+
+    @Column(name = "activation_expires_at")
+    private LocalDateTime activationExpiresAt;
+
     // Default constructor
     public User() {}
 
@@ -110,6 +119,30 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
+    public boolean isActivated() {
+        return activated;
+    }
+
+    public void setActivated(boolean activated) {
+        this.activated = activated;
+    }
+
+    public String getActivationToken() {
+        return activationToken;
+    }
+
+    public void setActivationToken(String activationToken) {
+        this.activationToken = activationToken;
+    }
+
+    public LocalDateTime getActivationExpiresAt() {
+        return activationExpiresAt;
+    }
+
+    public void setActivationExpiresAt(LocalDateTime activationExpiresAt) {
+        this.activationExpiresAt = activationExpiresAt;
+    }
+
     // Optional toString() method for debugging
 
     @Override
@@ -123,7 +156,9 @@ public class User {
                 ", email='" + email + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
+                ", activated=" + activated +
+                ", activationToken='" + activationToken + '\'' +
+                ", activationExpiresAt=" + activationExpiresAt +
                 '}';
     }
 }
-
