@@ -27,7 +27,9 @@ CREATE TABLE IF NOT EXISTS locations (
 CREATE TABLE IF NOT EXISTS posts (
                                      id SERIAL PRIMARY KEY,
                                      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    location_id INTEGER REFERENCES locations(id) ON DELETE SET NULL,
+    latitude DOUBLE PRECISION,
+    longitude DOUBLE PRECISION,
+    address VARCHAR(255),
     image_data BYTEA NOT NULL,
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -80,17 +82,7 @@ INSERT INTO locations (name, address, latitude, longitude, service_type) VALUES
                                                                              ('Bunny Shelter', '123 Rabbit St', 40.712776, -74.005974, 'shelter'),
                                                                              ('Happy Vet Clinic', '456 Carrot Blvd', 34.052235, -118.243683, 'veterinarian');
 
- --Uncomment and adjust as needed for posts, comments, and likes
- --INSERT INTO posts (user_id, location_id, content, image_data) VALUES
- --(1, 1, 'Content of the first post', decode('89504E470D0A1A0A', 'hex')),
- --(2, 2, 'Content of the second post', decode('89504E470D0A1A0A', 'hex'));
-
--- INSERT INTO comments (post_id, user_id, content) VALUES
---                                                      (1, 2, 'Great post!'),
---                                                      (2, 1, 'Thanks for sharing!')
---     ON CONFLICT DO NOTHING;
---
--- INSERT INTO likes (post_id, user_id) VALUES
---                                          (1, 2),
---                                          (2, 1)
+-- INSERT INTO posts (user_id, latitude, longitude, address, image_data, content, likes_count, comments_count) VALUES
+--                                                                                                                 (1, 45.2671, 19.8335, 'Example Street, Novi Sad', decode('hex_encoded_image_data', 'hex'), 'Sample content for post 1', 0, 0),
+--                                                                                                                 (2, 45.2671, 19.8335, 'Another Example Street, Novi Sad', decode('hex_encoded_image_data', 'hex'), 'Sample content for post 2', 0, 0)
 --     ON CONFLICT DO NOTHING;

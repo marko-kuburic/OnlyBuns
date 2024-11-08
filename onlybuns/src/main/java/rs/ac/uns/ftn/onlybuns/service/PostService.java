@@ -11,6 +11,6 @@ public interface PostService {
     Post updatePost(Long id, Post postDetails);
     void deletePost(Long id);
     List<Post> getPostsByUserId(Long userId);
-    List<Post> getPostsByLocationId(Long locationId);
+    List<Post> getPostsByLatLong(Double latitude, Double longitude);
 }
 

@@ -37,7 +37,7 @@ function PostList({ posts }) {
         <div key={post.id} className="post" style={{ marginBottom: '2rem', padding: '1.5rem', border: '1px solid #ccc', borderRadius: '8px' }}>
           <div style={{ marginLeft: '0.5rem' }}>
             <h3>{usernames[post.userId] || 'Loading...'}</h3>
-            <p>Location: {post.locationId}</p>
+            {/*<p>Location: {post.locationId}</p>*/}
             <p>
               Posted: {new Date(post.createdAt).toLocaleDateString('en-GB', {
                 dateStyle: 'full'
