@@ -4,8 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import rs.ac.uns.ftn.onlybuns.model.User;
 
-import java.util.Optional;
-
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -17,4 +15,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // Checks if a user with the given email exists
     boolean existsByEmail(String email);
+
+    // Finds a user by email
+    User findByEmail(String email);
+
+    // Finds a user by activation token
+    User findByActivationToken(String activationToken);
 }

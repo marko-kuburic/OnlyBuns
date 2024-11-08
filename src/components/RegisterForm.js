@@ -1,42 +1,31 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { registerUser } from '../api/userService';
 
 function RegisterForm() {
     const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         setIsLoading(true);
         setError(null);
 
-        const registerData = { username, password };
-
-        fetch('http://localhost:8080/api/users/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(registerData),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Registration failed');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                console.log('User registered:', data);
-                navigate('/'); // Redirect to the main page
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                setError('Registration failed. Please try again.');
-            })
-            .finally(() => setIsLoading(false));
+        try {
+            const registerData = { username, email, password };
+            await registerUser(registerData);
+            alert('Registration successful! Please check your email to activate your account.');
+            navigate('/');
+        } catch (error) {
+            console.error('Error:', error);
+            setError(error.message);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -47,6 +36,15 @@ function RegisterForm() {
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
+                    required
+                />
+            </div>
+            <div>
+                <label>Email:</label>
+                <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                 />
             </div>

@@ -31,6 +31,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public User getUserByActivationToken(String token) {
+        return userRepository.findByActivationToken(token);
+    }
+
+    @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
