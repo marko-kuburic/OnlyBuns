@@ -1,4 +1,4 @@
-package com.example.demo.config; // Adjust the package name according to your structure
+package rs.ac.uns.ftn.onlybuns.configuration; // Adjust the package name according to your structure
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
