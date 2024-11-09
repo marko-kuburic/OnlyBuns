@@ -3,7 +3,7 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow: hidden; /* Prevents page scrolling */
+  overflow-y: auto; /* Prevents page scrolling */
   font-family: 'Roboto', sans-serif;
   background-color: #f4f4f9;
 }
@@ -37,7 +37,7 @@ nav {
 /* Content Container */
 .content-container {
   padding-top: 80px; /* Account for fixed navbar height */
-  overflow-y: auto; /* Allows content scrolling within this container */
+  overflow: auto; /* Allows content scrolling within this container */
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
@@ -50,16 +50,23 @@ nav {
 }
 
 /* Post Styling */
+/* PostList.css */
+
+/* Ensures the container adapts to screen size without causing overflow */
 .post-list-container {
-  padding-top: 80px; /* Account for navbar height */
-  max-width: 800px;
-  margin: 0 auto; /* Center align the posts */
+  padding-top: 80px;
+  width: 100%;
+  max-width: 1000px; /* Adjust max-width to a reasonable value */
+  margin: 0 auto;
+  overflow-y: auto;
+  overflow-x: hidden; /* Hide any X-axis overflow within this container */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
+
 
 .post-card {
   background-color: white;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
   margin: 1.5rem 0;
   text-align: center;

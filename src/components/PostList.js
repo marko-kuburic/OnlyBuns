@@ -95,15 +95,24 @@ function PostList({ posts = [] }) {
   };
 
   return (
-      <div className="post-list-container">
+      <div
+          className="post-list-container"
+          style={{
+            paddingTop: '80px', // Prevents overlap with navbar
+            width: '100%',
+            maxWidth: '1000px', // Set a reasonable max width for larger screens
+            margin: '0 auto', // Center align the posts container
+            overflowY: 'auto', // Enable vertical scrolling if needed
+          }}
+      >
         {posts.map((post) => (
             <div key={post.id} className="post-card">
               <div className="post-header">
                 <h3 onClick={() => handleUsernameClick(post.userId)}>{usernames[post.userId] || 'Loading...'}</h3>
-                <p>Posted: {new Date(post.createdAt).toLocaleDateString('en-GB', { dateStyle: 'full' })}</p>
+                <p>Posted: {new Date(post.createdAt).toLocaleDateString('en-GB', {dateStyle: 'full'})}</p>
               </div>
               <div className="post-image-container">
-                <img src={`data:image/jpeg;base64,${post.imageData}`} alt="Rabbit" className="post-image" />
+                <img src={`data:image/jpeg;base64,${post.imageData}`} alt="Rabbit" className="post-image"/>
               </div>
               <div className="post-content">
                 <p>{post.content}</p>
