@@ -153,18 +153,18 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<Map<String, String>> getUserInfo(@PathVariable Long userId) {
-        logger.info("Received request to get user info for userId: {}", userId);
+       // logger.info("Received request to get user info for userId: {}", userId);
 
         User user = userService.findById(userId);
 
         if (user == null) {
-            logger.warn("User with userId {} not found", userId);
+            //logger.warn("User with userId {} not found", userId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         Map<String, String> response = new HashMap<>();
         response.put("username", user.getUsername());
-        logger.info("Successfully retrieved username for userId {}: {}", userId, user.getUsername());
+       // logger.info("Successfully retrieved username for userId {}: {}", userId, user.getUsername());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

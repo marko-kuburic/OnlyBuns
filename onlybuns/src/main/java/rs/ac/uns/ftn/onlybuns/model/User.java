@@ -26,6 +26,9 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(name = "address") // New field for address
+    private String address;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -47,13 +50,14 @@ public class User {
     // Default constructor
     public User() {}
 
-    // Constructor
-    public User(String username, String password, String name, String surname, String email, LocalDateTime createdAt) {
+    // Constructor with address
+    public User(String username, String password, String name, String surname, String email, String address, LocalDateTime createdAt) {
         this.username = username;
         this.password = password;
         this.name = name;
         this.surname = surname;
         this.email = email;
+        this.address = address; // Initialize address
         this.createdAt = createdAt;
     }
 
@@ -106,6 +110,14 @@ public class User {
         this.email = email;
     }
 
+    public String getAddress() {
+        return address; // New getter for address
+    }
+
+    public void setAddress(String address) {
+        this.address = address; // New setter for address
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -154,7 +166,6 @@ public class User {
         this.followersCount = followersCount;
     }
 
-
     @Override
     public String toString() {
         return "User{" +
@@ -164,6 +175,7 @@ public class User {
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", email='" + email + '\'' +
+                ", address='" + address + '\'' + // Include address in toString
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", activated=" + activated +

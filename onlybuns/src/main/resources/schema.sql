@@ -1,4 +1,4 @@
-/*-- Drop tables if they exist to avoid conflicts
+-- Drop tables if they exist to avoid conflicts
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS posts CASCADE;
 DROP TABLE IF EXISTS locations CASCADE;
@@ -14,6 +14,7 @@ CREATE TABLE users (
                        email VARCHAR(100) UNIQUE NOT NULL,
                        name VARCHAR(32) NOT NULL,
                        surname VARCHAR(32) NOT NULL,
+                       address VARCHAR(255), -- New address field
                        followers_count INTEGER DEFAULT 0 NOT NULL,
                        activated BOOLEAN DEFAULT FALSE NOT NULL,
                        is_admin BOOLEAN DEFAULT FALSE NOT NULL,
@@ -81,26 +82,29 @@ CREATE INDEX idx_locations_service_type ON locations(service_type);
 CREATE INDEX idx_likes_post_id ON likes(post_id);
 CREATE INDEX idx_comments_post_id ON comments(post_id);
 
-INSERT INTO users (username, email, password, name, surname, activated, is_admin, activation_token, activation_expires_at)
+-- Insert sample data into users table with the address field included
+INSERT INTO users (username, email, password, name, surname, address, activated, is_admin, activation_token, activation_expires_at)
 VALUES
-    ('admin', 'admin@gmail.com', 'hashed_password_0', 'Admin', 'User', TRUE, TRUE, NULL, NULL),
-    ('john_doe', 'john@example.com', 'hashed_password_1', 'John', 'Doe', FALSE, FALSE, 'sample_token_123', NOW() + INTERVAL '1 day'),
-    ('jane_smith', 'jane@example.com', 'hashed_password_2', 'Jane', 'Smith', FALSE, FALSE, 'sample_token_456', NOW() + INTERVAL '1 day');
+    ('admin', 'admin@gmail.com', 'hashed_password_0', 'Admin', 'User', '123 Admin Lane', TRUE, TRUE, NULL, NULL),
+    ('john_doe', 'john@example.com', 'hashed_password_1', 'John', 'Doe', '456 John St', FALSE, FALSE, 'sample_token_123', NOW() + INTERVAL '1 day'),
+    ('jane_smith', 'jane@example.com', 'hashed_password_2', 'Jane', 'Smith', '789 Jane Ave', FALSE, FALSE, 'sample_token_456', NOW() + INTERVAL '1 day');
 
+-- Insert sample data into locations table
 INSERT INTO locations (name, address, latitude, longitude, service_type) VALUES
                                                                              ('Bunny Shelter', '123 Rabbit St', 40.712776, -74.005974, 'shelter'),
                                                                              ('Happy Vet Clinic', '456 Carrot Blvd', 34.052235, -118.243683, 'veterinarian');
 
+-- Insert sample data into posts table
 INSERT INTO posts (user_id, location_id, content, image_data) VALUES
                                                                   (1, 1, 'Content of the first post', decode('89504E470D0A1A0A', 'hex')), -- placeholder binary data
                                                                   (2, 2, 'Content of the second post', decode('89504E470D0A1A0A', 'hex'));
 
+-- Insert sample data into comments table
 INSERT INTO comments (post_id, user_id, content) VALUES
                                                      (1, 2, 'Great post!'),
                                                      (2, 1, 'Thanks for sharing!');
 
+-- Insert sample data into likes table
 INSERT INTO likes (post_id, user_id) VALUES
                                          (1, 2),
                                          (2, 1);
-
-*/
