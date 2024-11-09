@@ -9,7 +9,7 @@ function HomePage({ username, handleLogout }) {
 
     return (
         <div>
-            <h1>OnlyBuns</h1>
+           
 
         </div>
     );

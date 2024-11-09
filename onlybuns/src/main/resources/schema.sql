@@ -1,4 +1,4 @@
--- Drop tables if they exist to avoid conflicts
+/*-- Drop tables if they exist to avoid conflicts
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS posts CASCADE;
 DROP TABLE IF EXISTS locations CASCADE;
@@ -108,3 +108,4 @@ INSERT INTO comments (post_id, user_id, content) VALUES
 INSERT INTO likes (post_id, user_id) VALUES
                                          (1, 2),
                                          (2, 1);
+*/
