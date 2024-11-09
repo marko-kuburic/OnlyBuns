@@ -1,0 +1,41 @@
+/* src/components/LoginPromptModal.css */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+    width: 300px;
+    max-width: 80%;
+}
+
+.modal-button {
+    background-color: #1877f2;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+.modal-close-button {
+    background: transparent;
+    border: none;
+    color: #333;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+}
