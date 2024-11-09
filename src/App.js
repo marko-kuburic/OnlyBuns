@@ -1,63 +1,65 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import React, { Suspense, useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import jwt_decode from 'jwt-decode';
+import Navbar from './components/Navbar';
+import LoginForm from './components/LoginForm';
+import RegisterForm from './components/RegisterForm';
 import PostForm from './components/PostForm';
 import PostList from './components/PostList';
-import UserHome from './components/UserHome';
-import 'leaflet/dist/leaflet.css';
-import './App.css';
+import ActivationPage from './components/ActivationPage';
+import HomePage from './components/HomePage';
 
 function App() {
-    const [posts, setPosts] = useState([]);
-
-    const fetchPosts = () => {
-        fetch('http://localhost:8080/api/posts')
-            .then((response) => response.json())
-            .then((data) => {
-                console.log('Fetched posts:', data);
-                setPosts(data);
-            })
-            .catch((error) => console.error('Error fetching posts:', error));
-    };
+    const [username, setUsername] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
-        fetchPosts();
-    }, []);
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            try {
+                const decodedToken = jwt_decode(token);
+                const userId = decodedToken.userId;
 
-    const handlePostSubmit = (formData, resetFormCallback) => {
-        fetch('http://localhost:8080/api/posts', {
-            method: 'POST',
-            body: formData,
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                console.log('Post created:', data);
-                fetchPosts();
-                if (resetFormCallback) resetFormCallback();
-            })
-            .catch((error) => console.error('Error creating post:', error));
+                // Fetch username from backend using userId
+                fetch(`http://localhost:8080/api/users/${userId}`)
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error("Failed to fetch user data");
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        setUsername(data.username);
+                        setIsLoggedIn(true);
+                        console.log("Fetched username:", data.username); // Debugging
+                    })
+                    .catch((error) => {
+                        console.error("Error fetching user data:", error);
+                    });
+            } catch (error) {
+                console.error("Failed to decode token", error);
+            }
+        }
+    }, [isLoggedIn]);
+
+    const handleLogout = () => {
+        localStorage.removeItem('authToken');
+        setUsername(null);
+        setIsLoggedIn(false);
     };
 
     return (
         <Router>
             <div className="App">
-                <nav>
-                    <Link to="/" className="nav-link">Home</Link>
-                    <Link to="/create-post" className="nav-link">Create Post</Link>
-                    <Link to="/posts" className="nav-link">View Posts</Link>
-                    <Link to="/nearby-posts" className="nav-link">Nearby Posts</Link>
-                    <Link to="/chat" className="nav-link">Chat</Link>
-                    <Link to="/profile" className="nav-link">My profile</Link>
-                </nav>
-                <Routes>
-                    <Route path="/" element={<UserHome />} />
-                    <Route path="/create-post" element={<PostForm onSubmit={handlePostSubmit} />} />
-                    <Route path="/posts" element={<PostList posts={posts} />} />
-                </Routes>
+                <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} username={username} />
+                <Suspense fallback={<div>Loading...</div>}>
+                    <Routes>
+                        <Route path="/login" element={<LoginForm setIsLoggedIn={setIsLoggedIn} />} />
+                        <Route path="/register" element={<RegisterForm />} />
+                        <Route path="/activate/:token" element={<ActivationPage />} />
+                        <Route path="/" element={<HomePage />} />
+                    </Routes>
+                </Suspense>
             </div>
         </Router>
     );

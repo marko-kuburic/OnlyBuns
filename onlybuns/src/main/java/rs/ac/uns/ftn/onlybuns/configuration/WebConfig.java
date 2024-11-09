@@ -1,4 +1,5 @@
-package rs.ac.uns.ftn.onlybuns.configuration; // Adjust the package name according to your structure
+
+package rs.ac.uns.ftn.onlybuns.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,11 +8,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**") // Adjust the path according to your API endpoints
-                .allowedOrigins("http://localhost:3000") // Change to your frontend's URL
-                .allowedMethods("GET", "POST", "PUT", "DELETE") // Allowed HTTP methods
-                .allowedHeaders("*");
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:3000") // Allow the frontend origin
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Specify allowed methods
+                .allowedHeaders("*") // Allow all headers
+                .allowCredentials(true); // Allow credentials if needed
     }
 }

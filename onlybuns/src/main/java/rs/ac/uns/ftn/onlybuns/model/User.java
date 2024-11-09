@@ -26,22 +26,38 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(name = "address") // New field for address
+    private String address;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "activated", nullable = false)
+    private boolean activated = false;
+
+    @Column(name = "activation_token", unique = true)
+    private String activationToken;
+
+    @Column(name = "activation_expires_at")
+    private LocalDateTime activationExpiresAt;
+
+    @Column(name = "followers_count", nullable = false)
+    private int followersCount = 0;
+
     // Default constructor
     public User() {}
 
-    // Constructor
-    public User(String username, String password, String name, String surname, String email, LocalDateTime createdAt) {
+    // Constructor with address
+    public User(String username, String password, String name, String surname, String email, String address, LocalDateTime createdAt) {
         this.username = username;
         this.password = password;
         this.name = name;
         this.surname = surname;
         this.email = email;
+        this.address = address; // Initialize address
         this.createdAt = createdAt;
     }
 
@@ -94,6 +110,14 @@ public class User {
         this.email = email;
     }
 
+    public String getAddress() {
+        return address; // New getter for address
+    }
+
+    public void setAddress(String address) {
+        this.address = address; // New setter for address
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -110,7 +134,37 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    // Optional toString() method for debugging
+    public boolean isActivated() {
+        return activated;
+    }
+
+    public void setActivated(boolean activated) {
+        this.activated = activated;
+    }
+
+    public String getActivationToken() {
+        return activationToken;
+    }
+
+    public void setActivationToken(String activationToken) {
+        this.activationToken = activationToken;
+    }
+
+    public LocalDateTime getActivationExpiresAt() {
+        return activationExpiresAt;
+    }
+
+    public void setActivationExpiresAt(LocalDateTime activationExpiresAt) {
+        this.activationExpiresAt = activationExpiresAt;
+    }
+
+    public int getFollowersCount() {
+        return followersCount;
+    }
+
+    public void setFollowersCount(int followersCount) {
+        this.followersCount = followersCount;
+    }
 
     @Override
     public String toString() {
@@ -121,9 +175,13 @@ public class User {
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", email='" + email + '\'' +
+                ", address='" + address + '\'' + // Include address in toString
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
+                ", activated=" + activated +
+                ", activationToken='" + activationToken + '\'' +
+                ", activationExpiresAt=" + activationExpiresAt +
+                ", followersCount=" + followersCount +
                 '}';
     }
 }
-
