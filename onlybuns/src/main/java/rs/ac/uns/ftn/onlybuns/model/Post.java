@@ -15,8 +15,14 @@ public class Post {
     @Column(name = "user_id", nullable = false)
     private Long userId; // Changed to store user ID directly
 
-    @Column(name = "location_id")
-    private Long locationId; // Changed to store location ID directly
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
+    @Column(name = "address", length = 255)
+    private String address;
 
     //@Lob
     @Column(name = "image_data", nullable = false)
@@ -40,14 +46,18 @@ public class Post {
     // Constructors
     public Post() {}
 
-    public Post(Long userId, Long locationId, byte[] imageData, String content, LocalDateTime createdAt) {
+    public Post(Long id, Long userId, Double latitude, Double longitude, String address, String content, byte[] imageData, LocalDateTime createdAt, LocalDateTime updatedAt, int likesCount, int commentsCount) {
+        this.id = id;
         this.userId = userId;
-        this.locationId = locationId;
-        this.imageData = imageData;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.address = address;
         this.content = content;
+        this.imageData = imageData;
         this.createdAt = createdAt;
-        this.likesCount = 0;
-        this.commentsCount = 0;
+        this.updatedAt = updatedAt;
+        this.likesCount = likesCount;
+        this.commentsCount = commentsCount;
     }
 
     // Getters and Setters
@@ -67,12 +77,28 @@ public class Post {
         this.userId = userId;
     }
 
-    public Long getLocationId() {
-        return locationId;
+    public Double getLatitude() {
+        return latitude;
     }
 
-    public void setLocationId(Long locationId) {
-        this.locationId = locationId;
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getContent() {
@@ -128,7 +154,9 @@ public class Post {
         return "Post{" +
                 "id=" + id +
                 ", userId=" + userId +
-                ", locationId=" + locationId +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", address='" + address + '\'' +
                 ", imageData=" + Arrays.toString(imageData) +
                 ", content='" + content + '\'' +
                 ", createdAt=" + createdAt +
