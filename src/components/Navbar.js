@@ -10,46 +10,62 @@ function Navbar({ isLoggedIn, handleLogout, username }) {
 
     return (
         <nav style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            padding: '1rem 2rem',
-            backgroundColor: '#333',
-            color: 'white',
-            alignItems: 'center',
-            width: '100vw', // Full width
-            position: 'fixed', // Fixed position to stick to the top
+            position: 'fixed',
             top: 0,
             left: 0,
-            boxSizing: 'border-box',
-            zIndex: 1000, // Ensures it stays on top
-            borderRadius: '0' // No rounded edges
+            right: 0,
+            height: '60px',
+            backgroundColor: '#222',
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)',
+            zIndex: 1000,
         }}>
-            {/* Left Section - Logo or Home Link */}
-            <div style={{ flex: '1', textAlign: 'left' }}>
-                <Link to="/" style={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', fontSize: '1.5rem' }}>
+            {/* Left Section with Padding for OnlyBuns */}
+            <div style={{ paddingLeft: '20px' }}>
+                <Link to="/" style={{ color: 'white', textDecoration: 'none', fontSize: '1.2rem', fontWeight: 'bold' }}>
                     OnlyBuns
                 </Link>
             </div>
 
-            {/* Center Section - Navigation Links */}
-            <div style={{ display: 'flex', gap: '1.5rem', flex: '1', justifyContent: 'center' }}>
+            {/* Center Section */}
+            <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
                 <Link to="/posts" style={{ color: 'white', textDecoration: 'none', fontSize: '1rem' }}>
                     Posts
                 </Link>
-                <Link to="/create-post" style={{ color: 'white', textDecoration: 'none', fontSize: '1rem' }}>
-                    Create Post
-                </Link>
             </div>
 
-            {/* Right Section - Login/Logout and Username */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: '1', justifyContent: 'flex-end' }}>
-                {isLoggedIn && <span style={{ color: 'white', marginRight: '0.5rem', fontSize: '1rem' }}>Welcome, {username}!</span>}
+            {/* Right Section with Padding for Login/Logout */}
+            <div style={{ paddingRight: '20px' }}>
                 {isLoggedIn ? (
-                    <button onClick={handleLogout} style={{ color: 'white', backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '0.9rem' }}>
-                        Logout
-                    </button>
+                    <>
+                        <span style={{ marginRight: '15px' }}>Welcome, {username}!</span>
+                        <button
+                            onClick={handleLogout}
+                            style={{
+                                background: 'none',
+                                color: 'white',
+                                border: 'none',
+                                cursor: 'pointer',
+                                fontSize: '1rem',
+                            }}
+                        >
+                            Logout
+                        </button>
+                    </>
                 ) : (
-                    <button onClick={handleLoginRedirect} style={{ color: 'white', backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '0.9rem' }}>
+                    <button
+                        onClick={handleLoginRedirect}
+                        style={{
+                            background: 'none',
+                            color: 'white',
+                            border: 'none',
+                            cursor: 'pointer',
+                            fontSize: '1rem',
+                        }}
+                    >
                         Login
                     </button>
                 )}

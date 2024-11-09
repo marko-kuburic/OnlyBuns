@@ -49,9 +49,9 @@ function LoginForm({ setIsLoggedIn }) {
         <div style={{
             display: 'flex',
             justifyContent: 'center',
-            alignItems: 'center',
-            height: '100vh',
-            backgroundColor: '#f5f7fa'
+            alignItems: 'flex-start',
+            minHeight: '70vh',
+            backgroundColor: '#f5f7fa',
         }}>
             <form onSubmit={handleSubmit} style={{
                 width: '400px',
@@ -60,7 +60,8 @@ function LoginForm({ setIsLoggedIn }) {
                 boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
                 backgroundColor: '#fff',
                 textAlign: 'center',
-                color: '#333'
+                color: '#333',
+                marginTop: '3rem',  // Adds top margin to give space at the top
             }}>
                 <h2 style={{
                     color: '#007bff',
@@ -80,7 +81,7 @@ function LoginForm({ setIsLoggedIn }) {
                             borderRadius: '4px',
                             border: '1px solid #ddd',
                             marginTop: '0.5rem',
-                            fontSize: '1rem'
+                            fontSize: '1rem',
                         }}
                     />
                 </div>
@@ -98,7 +99,7 @@ function LoginForm({ setIsLoggedIn }) {
                             borderRadius: '4px',
                             border: '1px solid #ddd',
                             marginTop: '0.5rem',
-                            fontSize: '1rem'
+                            fontSize: '1rem',
                         }}
                     />
                 </div>
@@ -116,7 +117,7 @@ function LoginForm({ setIsLoggedIn }) {
                     fontWeight: 'bold',
                     cursor: 'pointer',
                     marginBottom: '1rem',
-                    transition: 'background-color 0.3s'
+                    transition: 'background-color 0.3s',
                 }}>
                     Login
                 </button>
@@ -130,7 +131,7 @@ function LoginForm({ setIsLoggedIn }) {
                     fontSize: '1.1rem',
                     fontWeight: 'bold',
                     cursor: 'pointer',
-                    transition: 'background-color 0.3s'
+                    transition: 'background-color 0.3s',
                 }}>
                     Register
                 </button>

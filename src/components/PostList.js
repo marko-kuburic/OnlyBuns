@@ -1,6 +1,7 @@
+// src/components/PostList.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import jwt_decode from 'jwt-decode'; // Make sure jwt-decode is installed
+import jwt_decode from 'jwt-decode';
 import LoginPromptModal from './LoginPromptModal';
 import './PostList.css';
 
@@ -9,20 +10,19 @@ function PostList({ posts = [] }) {
   const [likes, setLikes] = useState({});
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [loginPromptAction, setLoginPromptAction] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Use this to track login status based on token
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if token exists and is valid
     const token = localStorage.getItem('authToken');
     if (token) {
       try {
-        jwt_decode(token); // This will throw an error if the token is invalid
+        jwt_decode(token);
         setIsLoggedIn(true);
       } catch (error) {
         console.error("Invalid token:", error);
         setIsLoggedIn(false);
-        localStorage.removeItem('authToken'); // Remove invalid token
+        localStorage.removeItem('authToken');
       }
     } else {
       setIsLoggedIn(false);
@@ -53,6 +53,10 @@ function PostList({ posts = [] }) {
 
     fetchUsernames();
   }, [posts]);
+
+  const handleUsernameClick = (userId) => {
+    navigate(`/profile/${userId}`);
+  };
 
   const handleLikeClick = async (postId) => {
     if (!isLoggedIn) {
@@ -85,14 +89,9 @@ function PostList({ posts = [] }) {
     if (!isLoggedIn) {
       setLoginPromptAction(() => () => handleCommentClick(postId));
       setShowLoginPrompt(true);
-    } else {
-      alert(`Redirecting to comments for post ${postId}`);
+      return;
     }
-  };
-
-  const closeModal = () => {
-    setShowLoginPrompt(false);
-    setLoginPromptAction(null);
+    alert(`Redirecting to comments for post ${postId}`);
   };
 
   return (
@@ -100,7 +99,7 @@ function PostList({ posts = [] }) {
         {posts.map((post) => (
             <div key={post.id} className="post-card">
               <div className="post-header">
-                <h3>{usernames[post.userId] || 'Loading...'}</h3>
+                <h3 onClick={() => handleUsernameClick(post.userId)}>{usernames[post.userId] || 'Loading...'}</h3>
                 <p>Posted: {new Date(post.createdAt).toLocaleDateString('en-GB', { dateStyle: 'full' })}</p>
               </div>
               <div className="post-image-container">
@@ -110,22 +109,22 @@ function PostList({ posts = [] }) {
                 <p>{post.content}</p>
               </div>
               <div className="post-stats">
-            <span className="post-likes" onClick={() => handleLikeClick(post.id)}>
-              <i className="fas fa-thumbs-up"></i>
-              <span>{post.likesCount + (likes[post.id] || 0)}</span>
-            </span>
+                <span className="post-likes" onClick={() => handleLikeClick(post.id)}>
+                  <i className="fas fa-thumbs-up"></i>
+                  <span>{post.likesCount + (likes[post.id] || 0)}</span>
+                </span>
                 <span className="post-comments" onClick={() => handleCommentClick(post.id)}>
-              <i className="fas fa-comment"></i>
-              <span>{post.commentsCount}</span>
-            </span>
+                  <i className="fas fa-comment"></i>
+                  <span>{post.commentsCount}</span>
+                </span>
               </div>
             </div>
         ))}
         {!isLoggedIn && showLoginPrompt && (
             <LoginPromptModal
-                onClose={closeModal}
+                onClose={() => setShowLoginPrompt(false)}
                 onLogin={() => {
-                  closeModal();
+                  setShowLoginPrompt(false);
                   if (loginPromptAction) loginPromptAction();
                 }}
             />

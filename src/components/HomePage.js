@@ -31,7 +31,7 @@ function HomePage({ username, handleLogout }) {
     }
 
     return (
-        <div style={{ padding: '0px', backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
+        <div style={{ width: '800px', backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
             <PostList posts={posts} />
         </div>
     );
