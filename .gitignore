@@ -38,12 +38,15 @@ build/
 /node_modules
 /.pnp
 .pnp.js
+.db
 
 # testing
 /coverage
 
 # production
 /build
+
+/data
 
 # misc
 .DS_Store

@@ -43,6 +43,8 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByActivationToken(token);
     }
 
+    public User getUserById(Long id){ return userRepository.findUserById(id);}
+
     @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();

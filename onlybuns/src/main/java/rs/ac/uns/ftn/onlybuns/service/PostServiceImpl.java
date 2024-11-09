@@ -56,7 +56,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getPostsByLocationId(Long locationId) {
-        return postRepository.findByLocationId(locationId);
+    public List<Post> getPostsByLatLong(Double lat, Double lon) {
+        return postRepository.findByLatitudeAndLongitude(lat, lon);
     }
 }

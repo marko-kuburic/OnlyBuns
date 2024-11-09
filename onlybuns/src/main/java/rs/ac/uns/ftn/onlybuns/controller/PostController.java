@@ -28,21 +28,27 @@ public class PostController {
     @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<Post> createPost(
             @RequestParam("userId") Long userId,
-            @RequestParam("locationId") Long locationId,
+            @RequestParam("latitude") double latitude,
+            @RequestParam("longitude") double longitude,
+            @RequestParam("address") String address,
             @RequestParam("content") String content,
             @RequestParam("image") MultipartFile image) throws IOException {
 
-        // Handle the image and convert it to byte[] if needed
+        // Convert the image to byte[]
         byte[] imageData = image.getBytes();
 
+        // Create and set Post fields
         Post post = new Post();
         post.setUserId(userId);
-        post.setLocationId(locationId);
+        post.setLatitude(latitude);
+        post.setLongitude(longitude);
+        post.setAddress(address);
         post.setContent(content);
         post.setImageData(imageData);
         post.setCreatedAt(LocalDateTime.now());
         post.setUpdatedAt(LocalDateTime.now());
 
+        // Save the post using postService
         Post createdPost = postService.createPost(post);
         return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
     }
@@ -85,9 +91,9 @@ public class PostController {
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
-    @GetMapping("/location/{locationId}")
-    public ResponseEntity<List<Post>> getPostsByLocationId(@PathVariable Long locationId) {
-        List<Post> posts = postService.getPostsByLocationId(locationId);
+    @GetMapping("/location/{lat}/{lon}")
+    public ResponseEntity<List<Post>> getPostsByLocationId(@PathVariable Double lat, @PathVariable Double lon) {
+        List<Post> posts = postService.getPostsByLatLong(lat, lon);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 }
