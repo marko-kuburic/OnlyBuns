@@ -12,4 +12,7 @@ public interface UserService {
     List<User> getAllUsers(); // Method for retrieving all users
     User updateUser(Long id, User updatedUser); // Method for updating a user
     void deleteUser(Long id); // Method for deleting a user
+    User registerUser(User user);
+    boolean loginUser(String rawPassword, String storedPassword);
+    User findById(Long id);
 }

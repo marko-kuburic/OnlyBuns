@@ -1,6 +1,7 @@
-package rs.ac.uns.ftn.onlybuns.service.impl;
+package rs.ac.uns.ftn.onlybuns.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.onlybuns.model.User;
 import rs.ac.uns.ftn.onlybuns.repository.UserRepository;
@@ -14,10 +15,12 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -51,7 +54,7 @@ public class UserServiceImpl implements UserService {
         if (existingUserOpt.isPresent()) {
             User existingUser = existingUserOpt.get();
             existingUser.setUsername(updatedUser.getUsername());
-            existingUser.setPassword(updatedUser.getPassword());
+            existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));  // Re-encode password on update
             existingUser.setEmail(updatedUser.getEmail());
             existingUser.setUpdatedAt(LocalDateTime.now());
             return userRepository.save(existingUser);
@@ -62,5 +65,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public User registerUser(User user) {
+        return userRepository.save(user);
+    }
+    @Override
+    public boolean loginUser(String rawPassword, String storedPassword) {
+        return passwordEncoder.matches(rawPassword, storedPassword); // Match password on login
+    }
+
+    @Override
+    public User findById(Long id) {
+        return userRepository.findById(id).orElse(null);
     }
 }

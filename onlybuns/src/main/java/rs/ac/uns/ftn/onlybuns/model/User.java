@@ -41,6 +41,9 @@ public class User {
     @Column(name = "activation_expires_at")
     private LocalDateTime activationExpiresAt;
 
+    @Column(name = "followers_count", nullable = false)
+    private int followersCount = 0;
+
     // Default constructor
     public User() {}
 
@@ -143,7 +146,14 @@ public class User {
         this.activationExpiresAt = activationExpiresAt;
     }
 
-    // Optional toString() method for debugging
+    public int getFollowersCount() {
+        return followersCount;
+    }
+
+    public void setFollowersCount(int followersCount) {
+        this.followersCount = followersCount;
+    }
+
 
     @Override
     public String toString() {
@@ -159,6 +169,7 @@ public class User {
                 ", activated=" + activated +
                 ", activationToken='" + activationToken + '\'' +
                 ", activationExpiresAt=" + activationExpiresAt +
+                ", followersCount=" + followersCount +
                 '}';
     }
 }

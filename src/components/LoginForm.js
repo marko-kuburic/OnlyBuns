@@ -1,36 +1,54 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function LoginForm() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const navigate = useNavigate();
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
         const loginData = { username, password };
 
-        fetch('http://localhost:8080/api/users/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(loginData),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Login failed');
-                }
-                return response.text();
-            })
-            .then((message) => {
-                console.log(message);
-                // Handle successful login (e.g., redirect to another page)
-            })
-            .catch((error) => console.error('Error:', error));
+        try {
+            const response = await fetch('http://localhost:8080/api/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(loginData),
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.message || 'Login failed. Please check your credentials.');
+            }
+
+            const data = await response.json();
+            const token = data.token; // Ensure backend response includes `token`
+
+            if (token) {
+                localStorage.setItem('authToken', token);
+                setSuccessMessage(data.message || "Login successful");
+                setErrorMessage('');
+
+                // Redirect to home without page reload
+                navigate('/');
+            } else {
+                throw new Error("Token not received, login unsuccessful.");
+            }
+        } catch (error) {
+            setErrorMessage(error.message);
+            setSuccessMessage('');
+            console.error('Error:', error);
+        }
     };
 
     const handleRegisterRedirect = () => {
-        window.location.href = '/register'; // Update this URL to your register page
+        navigate('/register');
     };
 
     return (
@@ -55,6 +73,10 @@ function LoginForm() {
             </div>
             <button type="submit">Login</button>
             <button type="button" onClick={handleRegisterRedirect}>Register</button>
+
+            {/* Display Success or Error Messages */}
+            {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
+            {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
         </form>
     );
 }

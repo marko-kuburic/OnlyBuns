@@ -3,65 +3,105 @@ import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../api/userService';
 
 function RegisterForm() {
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [userData, setUserData] = useState({
+        username: '',
+        password: '',
+        name: '',
+        surname: '',
+        email: ''
+    });
+    const [registrationSuccess, setRegistrationSuccess] = useState(false);
+    const [message, setMessage] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        setIsLoading(true);
-        setError(null);
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setUserData((prevData) => ({
+            ...prevData,
+            [name]: value
+        }));
+    };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         try {
-            const registerData = { username, email, password };
-            await registerUser(registerData);
-            alert('Registration successful! Please check your email to activate your account.');
-            navigate('/');
+            await registerUser(userData);
+            setMessage('Registration successful! Check your email to activate your account.');
+            setRegistrationSuccess(true);
         } catch (error) {
-            console.error('Error:', error);
-            setError(error.message);
-        } finally {
-            setIsLoading(false);
+            setMessage(error.message || 'Registration failed. Please try again.');
         }
     };
 
+    const handleBackToHome = () => {
+        navigate('/');
+    };
+
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label>Username:</label>
-                <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                />
-            </div>
-            <div>
-                <label>Email:</label>
-                <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                />
-            </div>
-            <div>
-                <label>Password:</label>
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-            </div>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            <button type="submit" disabled={isLoading}>
-                {isLoading ? 'Registering...' : 'Register'}
-            </button>
-        </form>
+        <div>
+            {registrationSuccess ? (
+                <div>
+                    <p>{message}</p>
+                    <button onClick={handleBackToHome}>Back to Home</button>
+                </div>
+            ) : (
+                <form onSubmit={handleSubmit}>
+                    <h2>Register</h2>
+                    <div>
+                        <label>Username:</label>
+                        <input
+                            type="text"
+                            name="username"
+                            value={userData.username}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label>Password:</label>
+                        <input
+                            type="password"
+                            name="password"
+                            value={userData.password}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label>Name:</label>
+                        <input
+                            type="text"
+                            name="name"
+                            value={userData.name}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label>Surname:</label>
+                        <input
+                            type="text"
+                            name="surname"
+                            value={userData.surname}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label>Email:</label>
+                        <input
+                            type="email"
+                            name="email"
+                            value={userData.email}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <button type="submit">Register</button>
+                    <p>{message}</p>
+                </form>
+            )}
+        </div>
     );
 }
 

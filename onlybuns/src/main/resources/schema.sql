@@ -1,4 +1,4 @@
--- Drop tables if they exist to avoid conflicts
+/*-- Drop tables if they exist to avoid conflicts
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS posts CASCADE;
 DROP TABLE IF EXISTS locations CASCADE;
@@ -10,11 +10,11 @@ DROP TABLE IF EXISTS likes CASCADE;
 CREATE TABLE users (
                        id SERIAL PRIMARY KEY,
                        username VARCHAR(50) UNIQUE NOT NULL,
-                       password VARCHAR(100) NOT NULL,
+                       password VARCHAR(255) NOT NULL,
                        email VARCHAR(100) UNIQUE NOT NULL,
                        name VARCHAR(32) NOT NULL,
                        surname VARCHAR(32) NOT NULL,
-                       followers INTEGER DEFAULT 0 NOT NULL,
+                       followers_count INTEGER DEFAULT 0 NOT NULL,
                        activated BOOLEAN DEFAULT FALSE NOT NULL,
                        is_admin BOOLEAN DEFAULT FALSE NOT NULL,
                        activation_token VARCHAR(100),
@@ -102,3 +102,5 @@ INSERT INTO comments (post_id, user_id, content) VALUES
 INSERT INTO likes (post_id, user_id) VALUES
                                          (1, 2),
                                          (2, 1);
+
+*/
