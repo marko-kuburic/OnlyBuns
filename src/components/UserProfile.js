@@ -35,7 +35,6 @@ function UserProfile() {
             padding: '2rem',
             margin: '2rem auto',
             borderRadius: '10px',
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
             maxWidth: '600px',
             textAlign: 'left'
         }}>

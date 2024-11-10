@@ -51,7 +51,7 @@ function LoginForm({ setIsLoggedIn }) {
             justifyContent: 'center',
             alignItems: 'flex-start',
             minHeight: '70vh',
-            backgroundColor: '#f5f7fa',
+
         }}>
             <form onSubmit={handleSubmit} style={{
                 width: '400px',

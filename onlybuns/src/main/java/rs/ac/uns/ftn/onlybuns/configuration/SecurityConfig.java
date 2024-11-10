@@ -24,21 +24,46 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(authorize -> authorize
-                        // Allow public access to these routes
-                        .requestMatchers("/api/users/register", "/api/users/login", "/api/users/activate/**", "/api/posts", "/api/users/**").permitAll()
-
-                        // Protect these endpoints for authenticated users only
-                        .requestMatchers("/api/posts/**/like", "/api/posts/**/comment").authenticated()
-
-                        // Apply authentication to all other requests
-                        .anyRequest().permitAll()
-                )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtSecret), UsernamePasswordAuthenticationFilter.class)
+                .csrf().disable()
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                );
+                )
+                .authorizeHttpRequests(authorize -> authorize
+                        // Allow unrestricted access to the following user-related routes
+                        .requestMatchers(
+                                "/api/users/register",
+                                "/api/users/login",
+                                "/api/users/activate/**",
+                                "/api/users/username/**",
+                                "/api/users/id/**"
+                        ).permitAll()
+
+                        // Allow unrestricted access to public post listing
+                        .requestMatchers("/api/posts").permitAll()
+
+                        // Protect specific post interaction routes for authenticated users only
+                        .requestMatchers(
+                                "/api/posts/*/like",
+                                "/api/posts/*/comment",
+                                "/api/posts/create",
+                                "/api/posts/update/*",
+                                "/api/posts/delete/*"
+                        ).authenticated()
+
+                        // Allow read-only access to posts by ID and location
+                        .requestMatchers(
+                                "/api/posts/user/**",
+                                "/api/posts/location/**",
+                                "/api/posts/{id}"
+                        ).permitAll()
+
+                        // Secure all other user-related routes
+                       // .requestMatchers("/api/users/**").authenticated()
+
+                        // Apply general access rules for any remaining routes
+                        .anyRequest().permitAll()
+                )
+                .addFilterBefore(new JwtAuthenticationFilter(jwtSecret), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

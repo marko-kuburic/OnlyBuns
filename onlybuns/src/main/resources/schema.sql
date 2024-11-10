@@ -108,8 +108,9 @@ INSERT INTO comments (post_id, user_id, content) VALUES
 INSERT INTO likes (post_id, user_id) VALUES
                                          (1, 2),
                                          (2, 1);
-*/
+
 
 INSERT INTO posts (user_id, location_id, content, image_data, created_at) VALUES
-                                                                  (3, 1, 'Content of the first post', decode('89504E470D0A1A0A', 'hex', NOW() + INTERVAL '1 day')), -- placeholder binary data
-                                                                  (4, 2, 'Content of the second post', decode('89504E470D0A1A0A', 'hex', NOW() + INTERVAL '2 day'));
+                                                                  (3, 1, 'Content of the first post', decode('89504E470D0A1A0A', 'hex'), NOW() - INTERVAL '5 day'), -- placeholder binary data
+                                                                  (3, 1, 'Content of the second post', decode('89504E470D0A1A0A', 'hex'), NOW() + INTERVAL '5 day');
+*/

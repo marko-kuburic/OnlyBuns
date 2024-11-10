@@ -57,7 +57,6 @@ const containerStyle = {
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: '100vh',
-    backgroundColor: '#f0f8ff',
 };
 
 const cardStyle = {
