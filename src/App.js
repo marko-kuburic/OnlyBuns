@@ -8,6 +8,7 @@ import PostForm from './components/PostForm';
 import PostList from './components/PostList';
 import ActivationPage from './components/ActivationPage';
 import HomePage from './components/HomePage';
+import UserProfile from './components/UserProfile';
 
 function App() {
     const [username, setUsername] = useState(null);
@@ -31,7 +32,6 @@ function App() {
                     .then((data) => {
                         setUsername(data.username);
                         setIsLoggedIn(true);
-                        console.log("Fetched username:", data.username); // Debugging
                     })
                     .catch((error) => {
                         console.error("Error fetching user data:", error);
@@ -46,17 +46,19 @@ function App() {
         localStorage.removeItem('authToken');
         setUsername(null);
         setIsLoggedIn(false);
+        window.location.reload();
     };
 
     return (
         <Router>
-            <div className="App">
+            <div className="App" style={{ paddingTop: '60px', backgroundColor: '#f5f5f5' }}> {/* Added padding-top to offset the navbar */}
                 <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} username={username} />
                 <Suspense fallback={<div>Loading...</div>}>
                     <Routes>
                         <Route path="/login" element={<LoginForm setIsLoggedIn={setIsLoggedIn} />} />
                         <Route path="/register" element={<RegisterForm />} />
                         <Route path="/activate/:token" element={<ActivationPage />} />
+                        <Route path="/profile/:userId" element={<UserProfile />} />
                         <Route path="/" element={<HomePage />} />
                     </Routes>
                 </Suspense>

@@ -1,0 +1,80 @@
+/* Center the post list container */
+.post-list-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Style individual post cards */
+.post-card {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.post-card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Style the post header */
+.post-header h3 {
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.post-header p {
+    font-size: 0.9rem;
+    color: #888;
+}
+
+/* Center the post image and set size */
+.post-image-container {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+.post-image {
+    max-width: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+/* Style the post content */
+.post-content p {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+/* Style the post stats with like and comment icons */
+.post-stats {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.post-likes, .post-comments {
+    display: flex;
+    align-items: center;
+    color: #1877F2;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.post-likes i, .post-comments i {
+    margin-right: 0.5rem;
+    font-size: 2rem;
+}
+
+.post-likes span, .post-comments span {
+    font-size: 1.25rem;
+}

@@ -15,4 +15,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByLatitudeAndLongitude(Double lattitude, Double longitude);
     @Query("SELECT p FROM Post p WHERE p.createdAt < :date")
     List<Post> findPostsOlderThan(LocalDateTime date);
+    List<Post> findAllByOrderByCreatedAtDesc();
 }

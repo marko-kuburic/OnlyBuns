@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import rs.ac.uns.ftn.onlybuns.model.Post;
 import rs.ac.uns.ftn.onlybuns.service.PostService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -96,4 +98,31 @@ public class PostController {
         List<Post> posts = postService.getPostsByLatLong(lat, lon);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
-}
+
+
+        @PostMapping("/{postId}/like")
+        public ResponseEntity<String> likePost(@PathVariable Long postId) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth == null || auth.getPrincipal() == null) {
+                return new ResponseEntity<>("Please log in to like posts.", HttpStatus.UNAUTHORIZED);
+            }
+
+            Long userId = (Long) auth.getPrincipal();
+            // Process the like for the user with userId
+            return ResponseEntity.ok("Liked successfully");
+        }
+
+        @PostMapping("/{postId}/comment")
+        public ResponseEntity<String> commentPost(@PathVariable Long postId, @RequestBody String comment) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth == null || auth.getPrincipal() == null) {
+                return new ResponseEntity<>("Please log in to comment on posts.", HttpStatus.UNAUTHORIZED);
+            }
+
+            Long userId = (Long) auth.getPrincipal();
+            // Process the comment for the user with userId
+            return ResponseEntity.ok("Comment added successfully");
+        }
+    }
+
+
