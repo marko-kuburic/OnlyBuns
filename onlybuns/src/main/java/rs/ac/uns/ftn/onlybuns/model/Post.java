@@ -25,8 +25,8 @@ public class Post {
     private String address;
 
     //@Lob
-    @Column(name = "image_data", nullable = false)
-    private byte[] imageData;
+    @Column(name = "image_path", nullable = false)
+    private String imagePath;
 
     @Column(nullable = false, length = 1000)
     private String content;
@@ -46,14 +46,14 @@ public class Post {
     // Constructors
     public Post() {}
 
-    public Post(Long id, Long userId, Double latitude, Double longitude, String address, String content, byte[] imageData, LocalDateTime createdAt, LocalDateTime updatedAt, int likesCount, int commentsCount) {
+    public Post(Long id, Long userId, Double latitude, Double longitude, String address, String content, String imagePath, LocalDateTime createdAt, LocalDateTime updatedAt, int likesCount, int commentsCount) {
         this.id = id;
         this.userId = userId;
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
         this.content = content;
-        this.imageData = imageData;
+        this.imagePath = imagePath;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.likesCount = likesCount;
@@ -117,12 +117,12 @@ public class Post {
         this.createdAt = createdAt;
     }
 
-    public byte[] getImageData() {
-        return imageData;
+    public String getImagePath() {
+        return imagePath;
     }
 
-    public void setImageData(byte[] imageData) {
-        this.imageData = imageData;
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public LocalDateTime getUpdatedAt() {
@@ -157,7 +157,7 @@ public class Post {
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", address='" + address + '\'' +
-                ", imageData=" + Arrays.toString(imageData) +
+                ", imagePath=" + imagePath + '\'' +
                 ", content='" + content + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +

@@ -40,7 +40,7 @@ CREATE TABLE posts (
                        id SERIAL PRIMARY KEY,
                        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
                        location_id INTEGER REFERENCES locations(id) ON DELETE SET NULL,
-                       image_data BYTEA NOT NULL,
+                       image_path TEXT NOT NULL,
                        content TEXT NOT NULL,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -95,9 +95,10 @@ INSERT INTO locations (name, address, latitude, longitude, service_type) VALUES
                                                                              ('Happy Vet Clinic', '456 Carrot Blvd', 34.052235, -118.243683, 'veterinarian');
 
 -- Insert sample data into posts table
-INSERT INTO posts (user_id, location_id, content, image_data) VALUES
-                                                                  (1, 1, 'Content of the first post', decode('89504E470D0A1A0A', 'hex')), -- placeholder binary data
-                                                                  (2, 2, 'Content of the second post', decode('89504E470D0A1A0A', 'hex'));
+INSERT INTO posts (user_id, latitude, longitude, address, content, image_path, created_at, updated_at) VALUES
+    (1, 45.2671, 19.8335, 'Novi Sad, Serbia', 'Content of the first post', '/path/to/image1.jpg', NOW(), NOW()),
+    (2, 44.7866, 20.4489, 'Belgrade, Serbia', 'Content of the second post', '/path/to/image2.jpg', NOW(), NOW()),
+    (1, 40.7128, -74.0060, 'New York, USA', 'Content of the third post', '/path/to/image3.jpg', NOW(), NOW());
 
 -- Insert sample data into comments table
 INSERT INTO comments (post_id, user_id, content) VALUES
@@ -110,7 +111,5 @@ INSERT INTO likes (post_id, user_id) VALUES
                                          (2, 1);
 
 
-INSERT INTO posts (user_id, location_id, content, image_data, created_at) VALUES
-                                                                  (3, 1, 'Content of the first post', decode('89504E470D0A1A0A', 'hex'), NOW() - INTERVAL '5 day'), -- placeholder binary data
-                                                                  (3, 1, 'Content of the second post', decode('89504E470D0A1A0A', 'hex'), NOW() + INTERVAL '5 day');
+
 */

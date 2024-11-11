@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import rs.ac.uns.ftn.onlybuns.model.Post;
@@ -11,7 +12,12 @@ import rs.ac.uns.ftn.onlybuns.service.PostService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,33 +33,53 @@ public class PostController {
         this.postService = postService;
     }
 
-    @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Post> createPost(
             @RequestParam("userId") Long userId,
             @RequestParam("latitude") double latitude,
             @RequestParam("longitude") double longitude,
             @RequestParam("address") String address,
             @RequestParam("content") String content,
-            @RequestParam("image") MultipartFile image) throws IOException {
+            @RequestParam("image") MultipartFile imageFile) throws IOException {
 
-        // Convert the image to byte[]
-        byte[] imageData = image.getBytes();
-
-        // Create and set Post fields
+        // Step 1: Create and save the post without setting the image path
         Post post = new Post();
         post.setUserId(userId);
         post.setLatitude(latitude);
         post.setLongitude(longitude);
         post.setAddress(address);
         post.setContent(content);
-        post.setImageData(imageData);
         post.setCreatedAt(LocalDateTime.now());
         post.setUpdatedAt(LocalDateTime.now());
+        post.setImagePath(imageFile.getOriginalFilename());
 
-        // Save the post using postService
+        // Save the post to get the generated postId
         Post createdPost = postService.createPost(post);
+        Long postId = createdPost.getId();  // Retrieve the generated ID
+
+        // Step 2: Define target directory for storing images in the public folder
+        String targetDir = "../public/uploads";
+        File directory = new File(targetDir);
+        if (!directory.exists()) {
+            directory.mkdirs();  // Create the directory if it doesn't exist
+        }
+
+        // Generate the filename based on postId
+        String fileExtension = StringUtils.getFilenameExtension(imageFile.getOriginalFilename());
+        String filename = postId + "." + fileExtension;
+        Path targetPath = Paths.get(targetDir, filename);
+
+        // Copy the image file to the target directory
+        Files.copy(imageFile.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+
+        // Step 3: Update the post with the relative path to the image
+        createdPost.setImagePath("uploads/" + filename);
+        postService.updatePost(postId,createdPost);  // Update the post with the image path
+
         return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
     }
+
+
 
     @GetMapping
     public ResponseEntity<List<Post>> getAllPosts() {

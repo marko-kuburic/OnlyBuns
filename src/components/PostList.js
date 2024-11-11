@@ -1,4 +1,3 @@
-// src/components/PostList.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
@@ -17,8 +16,13 @@ function PostList({ posts = [] }) {
     const token = localStorage.getItem('authToken');
     if (token) {
       try {
-        jwt_decode(token);
-        setIsLoggedIn(true);
+        const decodedToken = jwt_decode(token);
+        if (decodedToken.exp * 1000 < Date.now()) {
+          setIsLoggedIn(false);
+          localStorage.removeItem('authToken');
+        } else {
+          setIsLoggedIn(true);
+        }
       } catch (error) {
         console.error("Invalid token:", error);
         setIsLoggedIn(false);
@@ -108,24 +112,28 @@ function PostList({ posts = [] }) {
         {posts.map((post) => (
             <div key={post.id} className="post-card">
               <div className="post-header">
-                <h3 onClick={() => handleUsernameClick(post.userId)}>{usernames[post.userId] || 'Loading...'}</h3>
-                <p>Posted: {new Date(post.createdAt).toLocaleDateString('en-GB', {dateStyle: 'full'})}</p>
+                <h3 onClick={() => handleUsernameClick(post.userId)}>
+                  {usernames[post.userId] || 'Loading...'}
+                </h3>
+                <p>Posted: {new Date(post.createdAt).toLocaleDateString('en-GB', { dateStyle: 'full' })}</p>
               </div>
               <div className="post-image-container">
-                <img src={`data:image/jpeg;base64,${post.imageData}`} alt="Rabbit" className="post-image"/>
+                <img src={`${post.imagePath}`} alt="Rabbit"
+                     className="post-image"/>
+
               </div>
               <div className="post-content">
                 <p>{post.content}</p>
               </div>
               <div className="post-stats">
-                <span className="post-likes" onClick={() => handleLikeClick(post.id)}>
-                  <i className="fas fa-thumbs-up"></i>
-                  <span>{post.likesCount + (likes[post.id] || 0)}</span>
-                </span>
+            <span className="post-likes" onClick={() => handleLikeClick(post.id)}>
+              <i className="fas fa-thumbs-up"></i>
+              <span>{post.likesCount + (likes[post.id] || 0)}</span>
+            </span>
                 <span className="post-comments" onClick={() => handleCommentClick(post.id)}>
-                  <i className="fas fa-comment"></i>
-                  <span>{post.commentsCount}</span>
-                </span>
+              <i className="fas fa-comment"></i>
+              <span>{post.commentsCount}</span>
+            </span>
               </div>
             </div>
         ))}
