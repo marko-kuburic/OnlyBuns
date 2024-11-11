@@ -10,6 +10,8 @@ import rs.ac.uns.ftn.onlybuns.model.User;
 import rs.ac.uns.ftn.onlybuns.service.EmailService;
 import rs.ac.uns.ftn.onlybuns.service.UserService;
 import rs.ac.uns.ftn.onlybuns.util.JwtUtil;
+import rs.ac.uns.ftn.onlybuns.service.LoginAttemptService;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,11 +34,16 @@ public class UserController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    private final LoginAttemptService loginAttemptService;
+
     @Autowired
-    public UserController(UserService userService, EmailService emailService, PasswordEncoder passwordEncoder) {
+    public UserController(UserService userService, EmailService emailService, PasswordEncoder passwordEncoder,
+                          JwtUtil jwtUtil, LoginAttemptService loginAttemptService) {
         this.userService = userService;
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+        this.loginAttemptService = loginAttemptService;
     }
 
     @PostMapping("/register")
@@ -115,41 +122,54 @@ public class UserController {
     }
 
 
+    private String getClientIP(HttpServletRequest request) {
+        String xfHeader = request.getHeader("X-Forwarded-For");
+        String ip = (xfHeader == null) ? request.getRemoteAddr() : xfHeader.split(",")[0];
+        System.out.println("Client IP: " + ip); // Log IP address for verification
+        return ip;
+    }
+
+
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> loginUser(@RequestBody Map<String, String> credentials) {
+    public ResponseEntity<Map<String, String>> loginUser(@RequestBody Map<String, String> credentials, HttpServletRequest request) {
         Map<String, String> response = new HashMap<>();
         String username = credentials.get("username");
         String password = credentials.get("password");
 
+        // Obtain the client IP address
+        String clientIP = getClientIP(request);
+
+        // Check if IP is blocked
+        if (loginAttemptService.isBlocked(clientIP)) {
+            response.put("message", "Too many login attempts. Please try again in a minute.");
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(response);
+        }
+
+        // Process the login as before
         User existingUser = userService.getUserByUsername(username);
 
-        // Check if user exists
-        if (existingUser == null) {
-            response.put("message", "Login failed. User with the provided username does not exist.");
+        if (existingUser == null || !passwordEncoder.matches(password, existingUser.getPassword())) {
+            response.put("message", "Login failed. Invalid credentials.");
+            loginAttemptService.loginFailed(clientIP);  // Log failed attempt
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
 
-        // Verify password
-        if (!passwordEncoder.matches(password, existingUser.getPassword())) {
-            response.put("message", "Login failed. Please reenter your password.");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
-
-        // Check if account is activated
+        // Other conditions such as account activation
         if (!existingUser.isActivated()) {
             response.put("message", "Account not activated. Check your email for activation instructions.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
 
-        // Generate JWT token upon successful login
-        String jwtToken = JwtUtil.generateToken(existingUser.getId());
+        // Generate JWT token for successful login
+        String jwtToken = JwtUtil.generateToken(existingUser.getId(), username);
+        loginAttemptService.loginSucceeded(clientIP); // Clear the failed attempts
 
-        // Set success message and token in response
         response.put("message", "Login successful");
         response.put("token", jwtToken);
 
         return ResponseEntity.ok(response);
     }
+
     @GetMapping("/username/{username}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
         User user = userService.getUserByUsername(username);
@@ -177,6 +197,7 @@ public class UserController {
 
         Map<String, String> response = new HashMap<>();
         response.put("username", user.getUsername());
+        response.put("userId", user.getId().toString());
        // logger.info("Successfully retrieved username for userId {}: {}", userId, user.getUsername());
 
         return new ResponseEntity<>(response, HttpStatus.OK);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-function Navbar({ isLoggedIn, handleLogout, username }) {
+function Navbar({ isLoggedIn, handleLogout, username, userId }) {
     const navigate = useNavigate();
 
     const handleLoginRedirect = () => {
@@ -32,9 +32,6 @@ function Navbar({ isLoggedIn, handleLogout, username }) {
 
             {/* Center Section */}
             <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '15px' }}>
-                <Link to="/posts" style={{ color: 'white', textDecoration: 'none', fontSize: '1rem' }}>
-                    Posts
-                </Link>
                 {isLoggedIn && (
                     <>
                         <Link to="/create-post" style={{ color: 'white', textDecoration: 'none', fontSize: '1rem' }}>
@@ -49,7 +46,7 @@ function Navbar({ isLoggedIn, handleLogout, username }) {
                         <Link to="/chat" style={{ color: 'white', textDecoration: 'none', fontSize: '1rem' }}>
                             Chat
                         </Link>
-                        <Link to={`/profile/${username}`} style={{ color: 'white', textDecoration: 'none', fontSize: '1rem' }}>
+                        <Link to={`/profile/${userId}`} style={{ color: 'white', textDecoration: 'none', fontSize: '1rem' }}>
                             Profile
                         </Link>
                     </>

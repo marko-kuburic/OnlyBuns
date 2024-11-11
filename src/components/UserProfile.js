@@ -41,7 +41,7 @@ function UserProfile() {
             <h2 style={{
                 fontSize: '2rem',
                 marginBottom: '1rem',
-                color: '#007bff'
+                color: '#333'
             }}>{user.username}'s Profile</h2>
             <p style={{ fontSize: '1.1rem', color: '#333' }}><strong>Name:</strong> {user.name}</p>
             <p style={{ fontSize: '1.1rem', color: '#333' }}><strong>Surname:</strong> {user.surname}</p>

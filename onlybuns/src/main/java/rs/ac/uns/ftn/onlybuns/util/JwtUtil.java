@@ -18,10 +18,10 @@ public class JwtUtil {
     private static final long EXPIRATION_MS = 86400000L; // 1 day in milliseconds
 
     // Generate a token with only user ID
-    public static String generateToken(Long userId) {
+    public static String generateToken(Long userId, String username) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);  // Store user ID in token payload
-
+        claims.put("username", username);  // Store username in token payload
         return Jwts.builder()
                 .setClaims(claims) // Add only user ID to claims
                 .setIssuedAt(new Date())
@@ -43,5 +43,10 @@ public class JwtUtil {
     public static Long getUserIdFromJwtToken(String token) {
         Claims claims = validateToken(token);
         return claims.get("userId", Long.class); // Retrieve userId as Long
+    }
+
+    public static String getUsernameFromJwtToken(String token) {
+        Claims claims = validateToken(token);
+        return claims.get("username", String.class); // Retrieve username as String
     }
 }
