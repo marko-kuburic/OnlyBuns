@@ -38,7 +38,7 @@ public class PostServiceImpl implements PostService {
         Post post = getPostById(id);
         if (post != null) {
             post.setContent(postDetails.getContent());
-            post.setImageData(postDetails.getImageData());
+            post.setImagePath(postDetails.getImagePath());
             post.setUpdatedAt(LocalDateTime.now());
             return postRepository.save(post);
         }

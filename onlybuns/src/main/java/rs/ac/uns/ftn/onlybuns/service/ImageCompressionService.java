@@ -1,7 +1,5 @@
 package rs.ac.uns.ftn.onlybuns.service;
 
-// src/main/java/com/yourapp/service/ImageCompressionService.java
-
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.onlybuns.model.Post;
@@ -23,19 +21,26 @@ public class ImageCompressionService {
     }
 
     // Scheduled task that runs daily at midnight (cron expression)
-    @Scheduled(cron = "0 39 13 * * ?")// Runs daily at midnight
+    @Scheduled(cron = "30 24 14 * * ?")  // Runs daily at midnight
     public void compressOldImages() {
-        LocalDateTime oneMonthAgo = LocalDateTime.now().minusMonths(1);
+        LocalDateTime oneMonthAgo = LocalDateTime.now().minusMinutes(1);
 
         // Retrieve posts older than a month that have non-compressed images
         List<Post> oldPosts = postRepository.findPostsOlderThan(oneMonthAgo);
 
         for (Post post : oldPosts) {
             try {
-                // Compress the image and update the post
-                byte[] compressedImage = imageCompression.compressImage(post.getImageData(), 0.5f); // 70% quality
-                post.setImageData(compressedImage);  // Update the image with compressed data
-                post.setUpdatedAt(LocalDateTime.now());  // Update the timestamp
+                // Skip if the image has already been compressed
+                if (post.getImagePath().contains("_compressed")) {
+                    continue;
+                }
+
+                // Compress the image and get the path of the compressed file
+                String compressedImagePath = imageCompression.compressImage(post.getImagePath(), 0.5f); // 50% quality
+
+                // Update the post to use the new compressed image path
+                post.setImagePath(compressedImagePath);
+                post.setUpdatedAt(LocalDateTime.now());
 
                 // Save the updated post
                 postRepository.save(post);

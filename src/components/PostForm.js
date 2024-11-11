@@ -1,29 +1,30 @@
 import React, { useState } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
-import L from 'leaflet';  // Import Leaflet
+import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../App.css';
 import mapIcon from '../static/map_icon.png';
+import jwt_decode from "jwt-decode";
 
 function LocationMarker({ onLocationSelect }) {
   const [position, setPosition] = useState([45.2671, 19.8335]); // Default position
 
   const defaultIcon = new L.Icon({
-    iconUrl: mapIcon, // Custom marker image
-    iconSize: [32, 32], // Size of the marker
-    iconAnchor: [16, 32], // Anchor point of the icon
-    popupAnchor: [0, -32], // Popup position when clicked on marker
+    iconUrl: mapIcon,
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
   });
 
   useMapEvents({
     click(e) {
       const { lat, lng } = e.latlng;
       setPosition([lat, lng]);
-      onLocationSelect(lat, lng);
+      onLocationSelect(lat, lng, 'Selected Address'); // Placeholder address
     },
   });
 
-  return <Marker position={position} icon={defaultIcon}></Marker>; // Apply the custom icon to the marker
+  return <Marker position={position} icon={defaultIcon}></Marker>;
 }
 
 function PostForm({ onSubmit }) {
@@ -32,7 +33,7 @@ function PostForm({ onSubmit }) {
   const [imagePreview, setImagePreview] = useState(null);
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
-  const [address, setAddress] = useState('Temp');
+  const [address, setAddress] = useState('');
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -43,7 +44,7 @@ function PostForm({ onSubmit }) {
         setImagePreview(URL.createObjectURL(file));
       } else {
         alert('Only .jpg files are allowed.');
-        e.target.value = null; // Reset the file input if an invalid file is selected
+        e.target.value = null;
       }
     }
   };
@@ -57,26 +58,55 @@ function PostForm({ onSubmit }) {
     }
 
     const formData = new FormData();
-    formData.append('userId', 1);
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      const decodedToken = jwt_decode(token);
+      const userId = decodedToken.userId;
+      formData.append('userId', userId);
+    }
+
     formData.append('content', content);
     formData.append('image', image);
     formData.append('latitude', latitude);
     formData.append('longitude', longitude);
     formData.append('address', address);
 
-    onSubmit(formData, () => {
-      setContent('');
-      setImage(null);
-      setImagePreview(null);
-      setLatitude('');
-      setLongitude('');
-      setAddress('');
-    });
+    // Send POST request to the backend
+    fetch('http://localhost:8080/api/posts', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`, // If needed for authentication
+      },
+      body: formData,
+    })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Failed to create post');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          // Handle successful post creation (optional)
+          console.log('Post created:', data);
+          onSubmit(formData, () => {
+            setContent('');
+            setImage(null);
+            setImagePreview(null);
+            setLatitude('');
+            setLongitude('');
+            setAddress('');
+          });
+        })
+        .catch((error) => {
+          console.error('Error creating post:', error);
+          alert('Failed to create post.');
+        });
   };
 
-  const handleLocationSelect = (lat, lng) => {
+  const handleLocationSelect = (lat, lng, selectedAddress) => {
     setLatitude(lat);
     setLongitude(lng);
+    setAddress(selectedAddress);
   };
 
   return (
@@ -94,8 +124,8 @@ function PostForm({ onSubmit }) {
         <div>
           <label>Select location:</label>
           <MapContainer
-              center={[45.2671, 19.8335]} // Center map on Novi Sad or desired location
-              zoom={15} // Higher zoom level for more details
+              center={[45.2671, 19.8335]}
+              zoom={15}
               style={{ height: '300px', width: '100%', marginBottom: '1rem' }}
           >
             <TileLayer
@@ -104,6 +134,7 @@ function PostForm({ onSubmit }) {
             />
             <LocationMarker onLocationSelect={handleLocationSelect} />
           </MapContainer>
+          <p><strong>Address:</strong> {address || "Click on the map to select an address"}</p>
         </div>
 
         <div>

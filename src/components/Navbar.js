@@ -23,7 +23,7 @@ function Navbar({ isLoggedIn, handleLogout, username }) {
             boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)',
             zIndex: 1000,
         }}>
-            {/* Left Section with Padding for OnlyBuns */}
+            {/* Left Section */}
             <div style={{ paddingLeft: '20px' }}>
                 <Link to="/" style={{ color: 'white', textDecoration: 'none', fontSize: '1.2rem', fontWeight: 'bold' }}>
                     OnlyBuns
@@ -31,13 +31,32 @@ function Navbar({ isLoggedIn, handleLogout, username }) {
             </div>
 
             {/* Center Section */}
-            <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+            <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '15px' }}>
                 <Link to="/posts" style={{ color: 'white', textDecoration: 'none', fontSize: '1rem' }}>
                     Posts
                 </Link>
+                {isLoggedIn && (
+                    <>
+                        <Link to="/create-post" style={{ color: 'white', textDecoration: 'none', fontSize: '1rem' }}>
+                            Create Post
+                        </Link>
+                        <Link to="/trends" style={{ color: 'white', textDecoration: 'none', fontSize: '1rem' }}>
+                            Trends
+                        </Link>
+                        <Link to="/nearby-posts" style={{ color: 'white', textDecoration: 'none', fontSize: '1rem' }}>
+                            Nearby Posts
+                        </Link>
+                        <Link to="/chat" style={{ color: 'white', textDecoration: 'none', fontSize: '1rem' }}>
+                            Chat
+                        </Link>
+                        <Link to={`/profile/${username}`} style={{ color: 'white', textDecoration: 'none', fontSize: '1rem' }}>
+                            Profile
+                        </Link>
+                    </>
+                )}
             </div>
 
-            {/* Right Section with Padding for Login/Logout */}
+            {/* Right Section */}
             <div style={{ paddingRight: '20px' }}>
                 {isLoggedIn ? (
                     <>
