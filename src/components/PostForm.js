@@ -7,7 +7,7 @@ import mapIcon from '../static/map_icon.png';
 import jwt_decode from "jwt-decode";
 
 function LocationMarker({ onLocationSelect }) {
-  const [position, setPosition] = useState([45.2671, 19.8335]); // Default position
+  const [position, setPosition] = useState([45.2671, 19.8335]);
 
   const defaultIcon = new L.Icon({
     iconUrl: mapIcon,
@@ -49,6 +49,15 @@ function PostForm({ onSubmit }) {
     }
   };
 
+  const resetForm = () => {
+    setContent('');
+    setImage(null);
+    setImagePreview(null);
+    setLatitude('');
+    setLongitude('');
+    setAddress('');
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -61,8 +70,7 @@ function PostForm({ onSubmit }) {
     const token = localStorage.getItem('authToken');
     if (token) {
       const decodedToken = jwt_decode(token);
-      const userId = decodedToken.userId;
-      formData.append('userId', userId);
+      formData.append('userId', decodedToken.userId);
     }
 
     formData.append('content', content);
@@ -71,12 +79,9 @@ function PostForm({ onSubmit }) {
     formData.append('longitude', longitude);
     formData.append('address', address);
 
-    // Send POST request to the backend
     fetch('http://localhost:8080/api/posts', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`, // If needed for authentication
-      },
+      headers: token ? { 'Authorization': `Bearer ${token}` } : {},
       body: formData,
     })
         .then((response) => {
@@ -86,16 +91,12 @@ function PostForm({ onSubmit }) {
           return response.json();
         })
         .then((data) => {
-          // Handle successful post creation (optional)
           console.log('Post created:', data);
-          onSubmit(formData, () => {
-            setContent('');
-            setImage(null);
-            setImagePreview(null);
-            setLatitude('');
-            setLongitude('');
-            setAddress('');
-          });
+          if (onSubmit) {
+            onSubmit(formData, resetForm);  // Pass resetForm as a callback
+          } else {
+            resetForm(); // Reset form directly if onSubmit is not provided
+          }
         })
         .catch((error) => {
           console.error('Error creating post:', error);
@@ -134,7 +135,6 @@ function PostForm({ onSubmit }) {
             />
             <LocationMarker onLocationSelect={handleLocationSelect} />
           </MapContainer>
-
         </div>
 
         <div className="form-group">
