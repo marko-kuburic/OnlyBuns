@@ -21,9 +21,9 @@ public class ImageCompressionService {
     }
 
     // Scheduled task that runs daily at midnight (cron expression)
-    @Scheduled(cron = "30 24 14 * * ?")  // Runs daily at midnight
+    @Scheduled(cron = "00 05 00 * * ?")  // Runs daily at midnight
     public void compressOldImages() {
-        LocalDateTime oneMonthAgo = LocalDateTime.now().minusMinutes(1);
+        LocalDateTime oneMonthAgo = LocalDateTime.now().minusMonths(1);
 
         // Retrieve posts older than a month that have non-compressed images
         List<Post> oldPosts = postRepository.findPostsOlderThan(oneMonthAgo);

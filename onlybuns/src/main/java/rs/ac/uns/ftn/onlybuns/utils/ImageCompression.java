@@ -24,8 +24,8 @@ public class ImageCompression {
         inputImagePath = "../public/" + inputImagePath;
         BufferedImage image = ImageIO.read(new File(inputImagePath));
 
-        // Create the compressed images folder if it doesn't exist
-        Files.createDirectories(Paths.get(COMPRESSED_FOLDER_PATH));
+        // Create the compressed images folder if it doesn't exist, with "../public" prepended to the path
+        Files.createDirectories(Paths.get("../public" + COMPRESSED_FOLDER_PATH));
 
         // Define the output path for the compressed image (in the compressed folder)
         String outputImagePath = COMPRESSED_FOLDER_PATH + "/" +

@@ -114,7 +114,7 @@ function PostList({ posts = [] }) {
 
               <div className="post-body">
                 <div className="post-image-container">
-                  <img src={`http://localhost:8080${post.imagePath}`} alt="Rabbit" className="post-image" />
+                  <img src={`${post.imagePath}`} alt="Rabbit" className="post-image" />
                 </div>
 
                 <div className="post-content">
