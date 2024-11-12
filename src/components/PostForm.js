@@ -111,7 +111,7 @@ function PostForm({ onSubmit }) {
 
   return (
       <form onSubmit={handleSubmit} className="post-form">
-        <div>
+        <div className="form-group">
           <label>Description:</label>
           <textarea
               value={content}
@@ -121,7 +121,7 @@ function PostForm({ onSubmit }) {
           />
         </div>
 
-        <div>
+        <div className="form-group">
           <label>Select location:</label>
           <MapContainer
               center={[45.2671, 19.8335]}
@@ -134,10 +134,10 @@ function PostForm({ onSubmit }) {
             />
             <LocationMarker onLocationSelect={handleLocationSelect} />
           </MapContainer>
-          <p><strong>Address:</strong> {address || "Click on the map to select an address"}</p>
+
         </div>
 
-        <div>
+        <div className="form-group">
           <label>Upload Rabbit Image:</label>
           <input
               type="file"

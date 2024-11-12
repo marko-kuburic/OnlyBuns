@@ -95,10 +95,11 @@ INSERT INTO locations (name, address, latitude, longitude, service_type) VALUES
                                                                              ('Happy Vet Clinic', '456 Carrot Blvd', 34.052235, -118.243683, 'veterinarian');
 
 -- Insert sample data into posts table
-INSERT INTO posts (user_id, latitude, longitude, address, content, image_path, created_at, updated_at) VALUES
-    (1, 45.2671, 19.8335, 'Novi Sad, Serbia', 'Content of the first post', '/path/to/image1.jpg', NOW(), NOW()),
-    (2, 44.7866, 20.4489, 'Belgrade, Serbia', 'Content of the second post', '/path/to/image2.jpg', NOW(), NOW()),
-    (1, 40.7128, -74.0060, 'New York, USA', 'Content of the third post', '/path/to/image3.jpg', NOW(), NOW());
+INSERT INTO posts (user_id, location_id, content, image_path, created_at, updated_at) VALUES
+                                                                                          (1, 1, 'Snowflake is a gentle soul with the softest white fur that feels like a cloud. Her big, curious eyes sparkle with innocence, and her favorite pastime is hopping around in the garden. She loves to nibble on fresh greens and enjoys quiet moments with her favorite human.', '/images/rabbit1.jpg', NOW(), NOW()),
+                                                                                          (2, 2, 'Midnight is a mysterious, sleek black bunny with a heart full of love. Known for his gentle, calming presence, he adores snuggling up on a cozy blanket. Midnight’s playful spirit shines when he chases after his toy ball, a little bundle of joy and curiosity.', '/images/rabbit2.jpg', NOW(), NOW()),
+                                                                                          (1, NULL, 'Clover is a sweet, brown-spotted bunny with an adventurous streak. Her twitching nose never stops as she explores her surroundings. Clover’s signature move is a little hop and twist in the air, showing off her playful personality. She’s a gentle friend and brings happiness wherever she hops.', '/images/rabbit3.jpg', NOW(), NOW());
+
 
 -- Insert sample data into comments table
 INSERT INTO comments (post_id, user_id, content) VALUES
@@ -109,7 +110,4 @@ INSERT INTO comments (post_id, user_id, content) VALUES
 INSERT INTO likes (post_id, user_id) VALUES
                                          (1, 2),
                                          (2, 1);
-
-
-
 */

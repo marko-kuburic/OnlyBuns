@@ -1,3 +1,5 @@
+// src/App.js
+
 import React, { Suspense, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
@@ -9,85 +11,74 @@ import PostList from './components/PostList';
 import ActivationPage from './components/ActivationPage';
 import HomePage from './components/HomePage';
 import UserProfile from './components/UserProfile';
+import ProtectedRoute from './components/ProtectedRoute'; // Import the ProtectedRoute component
 
 function App() {
-    const [username, setUsername] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [posts, setPosts] = useState([]); // State to store posts
+    const [username, setUsername] = useState(null);
+    const [userId, setUserId] = useState(null);
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
         if (token) {
             try {
                 const decodedToken = jwt_decode(token);
-                const userId = decodedToken.userId;
-
-                // Fetch username from backend using userId
-                fetch(`http://localhost:8080/api/users/${userId}`)
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error("Failed to fetch user data");
-                        }
-                        return response.json();
-                    })
-                    .then((data) => {
-                        setUsername(data.username);
-                        setIsLoggedIn(true);
-                    })
-                    .catch((error) => {
-                        console.error("Error fetching user data:", error);
-                    });
+                // Check if token is still valid (not expired)
+                if (decodedToken.exp * 1000 > Date.now()) {
+                    setIsLoggedIn(true);
+                    setUsername(decodedToken.username); // Assuming your token includes username
+                    setUserId(decodedToken.userId);     // Assuming your token includes userId
+                } else {
+                    localStorage.removeItem('authToken');
+                }
             } catch (error) {
-                console.error("Failed to decode token", error);
+                console.error("Invalid token:", error);
             }
         }
-    }, [isLoggedIn]);
-
-    // Fetch posts from backend
-    useEffect(() => {
-        fetch('http://localhost:8080/api/posts')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Failed to fetch posts");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                setPosts(data); // Set the posts state with the fetched data
-            })
-            .catch((error) => {
-                console.error("Error fetching posts:", error);
-            });
     }, []);
 
     const handleLogout = () => {
         localStorage.removeItem('authToken');
-        setUsername(null);
         setIsLoggedIn(false);
+        setUsername(null);
+        setUserId(null);
         window.location.reload();
-    };
-
-    const handlePostSubmit = (formData, resetForm) => {
-        // Here you can handle the form submission, for example, sending the data to the backend
-        console.log('Form submitted:', formData);
-
-        // Reset the form after submission
-        resetForm();
     };
 
     return (
         <Router>
             <div className="App" style={{ paddingTop: '60px', backgroundColor: '#f5f5f5' }}>
-                <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} username={username} />
+                <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} username={username} userId={userId} />
                 <Suspense fallback={<div>Loading...</div>}>
                     <Routes>
+                        <Route path="/" element={<HomePage />} />
                         <Route path="/login" element={<LoginForm setIsLoggedIn={setIsLoggedIn} />} />
                         <Route path="/register" element={<RegisterForm />} />
                         <Route path="/activate/:token" element={<ActivationPage />} />
                         <Route path="/profile/:userId" element={<UserProfile />} />
-                        <Route path="/" element={<HomePage />} />
-                        <Route path="/create-post" element={<PostForm onSubmit={handlePostSubmit} />} />
-                        <Route path="/posts" element={<PostList posts={posts} />} /> {/* Pass posts as prop */}
+                        <Route path="/posts" element={<PostList />} />
+
+                        {/* Protected Routes */}
+                        <Route path="/create-post" element={
+                            <ProtectedRoute isLoggedIn={isLoggedIn}>
+                                <PostForm />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/trends" element={
+                            <ProtectedRoute isLoggedIn={isLoggedIn}>
+                                <div>Trends</div>
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/nearby-posts" element={
+                            <ProtectedRoute isLoggedIn={isLoggedIn}>
+                                <div>Nearby Posts</div>
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/chat" element={
+                            <ProtectedRoute isLoggedIn={isLoggedIn}>
+                                <div>Chat</div>
+                            </ProtectedRoute>
+                        } />
                     </Routes>
                 </Suspense>
             </div>

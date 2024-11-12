@@ -31,6 +31,7 @@ function LoginForm({ setIsLoggedIn }) {
                     setErrorMessage('');
                     setIsLoggedIn(true);
                     navigate('/');
+                    window.location.reload();
                 } else {
                     throw new Error('Token not received, login unsuccessful.');
                 }
@@ -64,7 +65,7 @@ function LoginForm({ setIsLoggedIn }) {
                 marginTop: '3rem',  // Adds top margin to give space at the top
             }}>
                 <h2 style={{
-                    color: '#007bff',
+                    color: '#333',
                     marginBottom: '1.5rem'
                 }}>Welcome to OnlyBuns!</h2>
 
@@ -109,7 +110,7 @@ function LoginForm({ setIsLoggedIn }) {
                 <button type="submit" style={{
                     width: '100%',
                     padding: '0.75rem',
-                    backgroundColor: '#007bff',
+                    backgroundColor: '#333',
                     color: 'white',
                     border: 'none',
                     borderRadius: '4px',

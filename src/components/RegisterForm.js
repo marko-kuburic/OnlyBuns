@@ -1,5 +1,3 @@
-// src/components/RegisterForm.js
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../api/userService';
@@ -8,6 +6,7 @@ function RegisterForm() {
     const [userData, setUserData] = useState({
         username: '',
         password: '',
+        confirmPassword: '',
         name: '',
         surname: '',
         email: '',
@@ -21,12 +20,14 @@ function RegisterForm() {
 
     const validate = () => {
         const newErrors = {};
-
         if (!/^[a-zA-Z0-9]{3,15}$/.test(userData.username)) {
             newErrors.username = "Username must be 3-15 alphanumeric characters.";
         }
         if (userData.password.length < 6) {
             newErrors.password = "Password must be at least 6 characters.";
+        }
+        if (userData.password !== userData.confirmPassword) {
+            newErrors.confirmPassword = "Passwords do not match.";
         }
         if (!/^[a-zA-Z]+$/.test(userData.name)) {
             newErrors.name = "Name can only contain letters.";
@@ -40,7 +41,6 @@ function RegisterForm() {
         if (!userData.address) {
             newErrors.address = "Address is required.";
         }
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -71,21 +71,33 @@ function RegisterForm() {
     };
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh'}}>
-            <div style={{ width: '400px', padding: '2rem', borderRadius: '10px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', backgroundColor: 'white' }}>
+        <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '90vh', // Set exact height to prevent scroll
+            boxSizing: 'border-box' // Ensures padding is included within height
+        }}>
+            <div style={{
+                width: '400px',
+                padding: '2rem',
+                borderRadius: '10px',
+                boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                backgroundColor: 'white'
+            }}>
                 {registrationSuccess ? (
-                    <div>
-                        <p>{message}</p>
+                    <div style={{ textAlign: 'center', marginTop: '-2rem' }}>
+                        <p style={{ fontSize: '1rem', color: '#333' }}>{message}</p>
                         <button onClick={handleBackToHome} style={buttonStyle}>Back to Home</button>
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit}>
                         <h2 style={{ textAlign: 'center', color: '#333' }}>Register</h2>
-                        {['username', 'password', 'name', 'surname', 'email', 'address'].map((field) => (
+                        {['username', 'password', 'confirmPassword', 'name', 'surname', 'email', 'address'].map((field) => (
                             <div key={field} style={{ marginBottom: '1rem' }}>
-                                <label style={labelStyle}>{field.charAt(0).toUpperCase() + field.slice(1)}:</label>
+                                <label style={labelStyle}>{field === 'confirmPassword' ? 'Confirm Password' : field.charAt(0).toUpperCase() + field.slice(1)}:</label>
                                 <input
-                                    type={field === 'password' ? 'password' : 'text'}
+                                    type={field === 'password' || field === 'confirmPassword' ? 'password' : 'text'}
                                     name={field}
                                     value={userData[field]}
                                     onChange={handleChange}
@@ -96,7 +108,9 @@ function RegisterForm() {
                             </div>
                         ))}
                         <button type="submit" style={buttonStyle}>Register</button>
-                        {message && <p style={{ color: 'red', fontSize: '0.875rem' }}>{message}</p>}
+                        {message && !registrationSuccess && (
+                            <p style={{ color: 'red', fontSize: '0.875rem' }}>{message}</p>
+                        )}
                     </form>
                 )}
             </div>

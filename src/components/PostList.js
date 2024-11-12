@@ -66,6 +66,7 @@ function PostList({ posts = [] }) {
     if (!isLoggedIn) {
       setLoginPromptAction(() => () => handleLikeClick(postId));
       setShowLoginPrompt(true);
+
       return;
     }
 
@@ -87,6 +88,8 @@ function PostList({ posts = [] }) {
     } catch (error) {
       console.error('Error liking post:', error);
     }
+
+    alert(`Liking is still in development.`);
   };
 
   const handleCommentClick = (postId) => {
@@ -95,20 +98,11 @@ function PostList({ posts = [] }) {
       setShowLoginPrompt(true);
       return;
     }
-    alert(`Redirecting to comments for post ${postId}`);
+    alert(`Commenting is still in development.`);
   };
 
   return (
-      <div
-          className="post-list-container"
-          style={{
-            paddingTop: '80px', // Prevents overlap with navbar
-            width: '100%',
-            maxWidth: '1000px', // Set a reasonable max width for larger screens
-            margin: '0 auto', // Center align the posts container
-            overflowY: 'auto', // Enable vertical scrolling if needed
-          }}
-      >
+      <div className="post-list-container">
         {posts.map((post) => (
             <div key={post.id} className="post-card">
               <div className="post-header">
@@ -117,14 +111,17 @@ function PostList({ posts = [] }) {
                 </h3>
                 <p>Posted: {new Date(post.createdAt).toLocaleDateString('en-GB', { dateStyle: 'full' })}</p>
               </div>
-              <div className="post-image-container">
-                <img src={`${post.imagePath}`} alt="Rabbit"
-                     className="post-image"/>
 
+              <div className="post-body">
+                <div className="post-image-container">
+                  <img src={`http://localhost:8080${post.imagePath}`} alt="Rabbit" className="post-image" />
+                </div>
+
+                <div className="post-content">
+                  <p>{post.content}</p>
+                </div>
               </div>
-              <div className="post-content">
-                <p>{post.content}</p>
-              </div>
+
               <div className="post-stats">
             <span className="post-likes" onClick={() => handleLikeClick(post.id)}>
               <i className="fas fa-thumbs-up"></i>
@@ -137,7 +134,9 @@ function PostList({ posts = [] }) {
               </div>
             </div>
         ))}
-        {!isLoggedIn && showLoginPrompt && (
+
+        {/* Display LoginPromptModal if user is not logged in and tried to like/comment */}
+        {showLoginPrompt && !isLoggedIn && (
             <LoginPromptModal
                 onClose={() => setShowLoginPrompt(false)}
                 onLogin={() => {

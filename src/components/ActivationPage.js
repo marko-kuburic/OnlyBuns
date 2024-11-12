@@ -56,7 +56,7 @@ const containerStyle = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    minHeight: '100vh',
+    height: '90vh',
 };
 
 const cardStyle = {
