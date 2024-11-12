@@ -65,7 +65,7 @@ public class UserController {
         user.setFollowersCount(0);  // Set initial follower count if applicable
         user.setActivated(false);
         user.setActivationToken(UUID.randomUUID().toString());
-        user.setActivationExpiresAt(LocalDateTime.now().plusHours(24));
+        user.setActivationExpiresAt(LocalDateTime.now().plusHours(1));
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
 
@@ -103,7 +103,7 @@ public class UserController {
         }
 
         if(user.isActivated()){
-            response.put("message", "Account activated successfully");
+            response.put("message", "Account is already activated");
             return ResponseEntity.ok(response);
         }
 
