@@ -103,7 +103,7 @@ public class UserController {
         }
 
         if(user.isActivated()){
-            response.put("message", "Account is already activated");
+            response.put("message", "Account is activated");
             return ResponseEntity.ok(response);
         }
 
