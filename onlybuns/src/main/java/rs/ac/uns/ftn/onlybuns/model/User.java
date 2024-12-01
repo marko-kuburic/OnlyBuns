@@ -1,7 +1,12 @@
 package rs.ac.uns.ftn.onlybuns.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -46,6 +51,25 @@ public class User {
 
     @Column(name = "followers_count", nullable = false)
     private int followersCount = 0;
+
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id"
+    )
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_followers",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "follower_id")
+    )
+    private Set<User> followers;
+
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id"
+    )
+    @ManyToMany(mappedBy = "followers")
+    private Set<User> following;
 
     // Default constructor
     public User() {}
@@ -164,6 +188,26 @@ public class User {
 
     public void setFollowersCount(int followersCount) {
         this.followersCount = followersCount;
+    }
+
+    // Getter for followers
+    public Set<User> getFollowers() {
+        return followers;
+    }
+
+    // Setter for followers
+    public void setFollowers(Set<User> followers) {
+        this.followers = followers;
+    }
+
+    // Getter for following
+    public Set<User> getFollowing() {
+        return following;
+    }
+
+    // Setter for following
+    public void setFollowing(Set<User> following) {
+        this.following = following;
     }
 
     @Override

@@ -1,11 +1,16 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { FaUserCircle } from 'react-icons/fa'; // Import the user icon from react-icons
 
-function Navbar({ isLoggedIn, handleLogout, username, userId }) {
+function Navbar({ isLoggedIn, handleLogout, userId }) {
     const navigate = useNavigate();
 
     const handleLoginRedirect = () => {
         navigate('/login');
+    };
+
+    const handleProfileRedirect = () => {
+        navigate(`/myprofile/${userId}`);
     };
 
     return (
@@ -46,18 +51,25 @@ function Navbar({ isLoggedIn, handleLogout, username, userId }) {
                         <Link to="/chat" style={{ color: 'white', textDecoration: 'none', fontSize: '1rem' }}>
                             Chat
                         </Link>
-                        <Link to={`/profile/${userId}`} style={{ color: 'white', textDecoration: 'none', fontSize: '1rem' }}>
-                            Profile
-                        </Link>
                     </>
                 )}
             </div>
 
             {/* Right Section */}
-            <div style={{ paddingRight: '20px' }}>
+            <div style={{ paddingRight: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                 {isLoggedIn ? (
                     <>
-                        <span style={{ marginRight: '15px' }}>Welcome, {username}!</span>
+                        {/* Profile Icon */}
+                        <FaUserCircle
+                            onClick={handleProfileRedirect}
+                            style={{
+                                fontSize: '1.8rem',
+                                cursor: 'pointer',
+                                color: 'white',
+                            }}
+                            title="Profile"
+                        />
+                        {/* Logout Button */}
                         <button
                             onClick={handleLogout}
                             style={{

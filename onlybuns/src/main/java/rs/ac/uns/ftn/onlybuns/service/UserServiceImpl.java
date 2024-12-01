@@ -1,5 +1,6 @@
 package rs.ac.uns.ftn.onlybuns.service;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,10 @@ import rs.ac.uns.ftn.onlybuns.service.UserService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Isolation;
+
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -27,6 +32,43 @@ public class UserServiceImpl implements UserService {
     public User saveUser(User user) {
         return userRepository.save(user);
     }
+
+
+    public void updatePassword(Long userId, String newPassword) {
+        User user = getUserById(userId);
+        if (user != null) {
+            user.setPassword(newPassword);
+            userRepository.save(user);
+        }
+    }
+
+    public void updateAddress(Long userId, String newAddress) {
+        User user = getUserById(userId);
+        if (user != null) {
+            user.setAddress(newAddress);
+            userRepository.save(user);
+        }
+    }
+
+    public void updateName(Long userId, String newName) {
+        User user = getUserById(userId);
+        if (user != null) {
+            user.setName(newName);
+            userRepository.save(user);
+        }
+    }
+
+    public void updateSurname(Long userId, String newSurname) {
+        User user = getUserById(userId);
+        if (user != null) {
+            user.setSurname(newSurname);
+            userRepository.save(user);
+        }
+    }
+
+
+
+
 
     @Override
     public User getUserByUsername(String username) {
@@ -70,9 +112,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public User registerUser(User user) {
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+
+        try {
+            // Simulate a long operation (for testing purposes)
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Unexpected error occurred during registration");
+        }
+
         return userRepository.save(user);
     }
+
+
     @Override
     public boolean loginUser(String rawPassword, String storedPassword) {
         return passwordEncoder.matches(rawPassword, storedPassword); // Match password on login
