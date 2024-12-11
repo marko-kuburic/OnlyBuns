@@ -1,10 +1,11 @@
 /*-- Drop tables if they exist to avoid conflicts
-DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS user_followers CASCADE;
+DROP TABLE IF EXISTS likes CASCADE;
+DROP TABLE IF EXISTS comments CASCADE;
+DROP TABLE IF EXISTS ads CASCADE;
 DROP TABLE IF EXISTS posts CASCADE;
 DROP TABLE IF EXISTS locations CASCADE;
-DROP TABLE IF EXISTS ads CASCADE;
-DROP TABLE IF EXISTS comments CASCADE;
-DROP TABLE IF EXISTS likes CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
 
 -- Table for Users
 CREATE TABLE users (
@@ -75,6 +76,13 @@ CREATE TABLE ads (
                      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Table for User Followers (Many-to-Many relationship)
+CREATE TABLE user_followers (
+                                user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+                                follower_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+                                PRIMARY KEY (user_id, follower_id) -- Ensures unique follower relationships
+);
+
 -- Indexes for faster lookup
 CREATE INDEX idx_users_username ON users(username);
 CREATE INDEX idx_posts_user_id ON posts(user_id);
@@ -82,7 +90,7 @@ CREATE INDEX idx_locations_service_type ON locations(service_type);
 CREATE INDEX idx_likes_post_id ON likes(post_id);
 CREATE INDEX idx_comments_post_id ON comments(post_id);
 
--- Insert sample data into users table with the address field included
+-- Insert sample data into users table
 INSERT INTO users (username, email, password, name, surname, address, activated, is_admin, activation_token, activation_expires_at)
 VALUES
     ('admin', 'admin@gmail.com', 'hashed_password_0', 'Admin', 'User', '123 Admin Lane', TRUE, TRUE, NULL, NULL),
@@ -96,10 +104,9 @@ INSERT INTO locations (name, address, latitude, longitude, service_type) VALUES
 
 -- Insert sample data into posts table
 INSERT INTO posts (user_id, location_id, content, image_path, created_at, updated_at) VALUES
-                                                                                          (1, 1, 'Snowflake is a gentle soul with the softest white fur that feels like a cloud. Her big, curious eyes sparkle with innocence, and her favorite pastime is hopping around in the garden. She loves to nibble on fresh greens and enjoys quiet moments with her favorite human.', '/images/rabbit1.jpg', NOW(), NOW()),
-                                                                                          (2, 2, 'Midnight is a mysterious, sleek black bunny with a heart full of love. Known for his gentle, calming presence, he adores snuggling up on a cozy blanket. Midnight’s playful spirit shines when he chases after his toy ball, a little bundle of joy and curiosity.', '/images/rabbit2.jpg', NOW(), NOW()),
-                                                                                          (1, NULL, 'Clover is a sweet, brown-spotted bunny with an adventurous streak. Her twitching nose never stops as she explores her surroundings. Clover’s signature move is a little hop and twist in the air, showing off her playful personality. She’s a gentle friend and brings happiness wherever she hops.', '/images/rabbit3.jpg', NOW(), NOW());
-
+                                                                                          (1, 1, 'Snowflake is a gentle soul with the softest white fur that feels like a cloud.', '/images/rabbit1.jpg', NOW(), NOW()),
+                                                                                          (2, 2, 'Midnight is a mysterious, sleek black bunny with a heart full of love.', '/images/rabbit2.jpg', NOW(), NOW()),
+                                                                                          (1, NULL, 'Clover is a sweet, brown-spotted bunny with an adventurous streak.', '/images/rabbit3.jpg', NOW(), NOW());
 
 -- Insert sample data into comments table
 INSERT INTO comments (post_id, user_id, content) VALUES
@@ -110,4 +117,13 @@ INSERT INTO comments (post_id, user_id, content) VALUES
 INSERT INTO likes (post_id, user_id) VALUES
                                          (1, 2),
                                          (2, 1);
+
+  -- Insert sample data into user_followers table
+INSERT INTO user_followers (user_id, follower_id)
+VALUES
+    (4, 2), -- User 1 is followed by User 2
+    (4, 3), -- User 1 is followed by User 3
+    (4, 1), -- User 2 is followed by User 1
+    (1, 4); -- User 3 is followed by User 1
+
 */

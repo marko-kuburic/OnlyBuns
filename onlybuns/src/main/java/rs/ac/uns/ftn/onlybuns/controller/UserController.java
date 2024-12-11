@@ -211,4 +211,60 @@ public class UserController {
         List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
+
+    @PutMapping("/{userId}/update-name")
+    public ResponseEntity<String> updateName(@PathVariable Long userId, @RequestBody Map<String, String> body) {
+        String newName = body.get("name");
+        userService.updateName(userId, newName);
+        return ResponseEntity.ok("Name updated successfully.");
+    }
+
+    @PutMapping("/{userId}/update-surname")
+    public ResponseEntity<String> updateSurname(@PathVariable Long userId, @RequestBody Map<String, String> body) {
+        String newSurname = body.get("surname");
+        userService.updateSurname(userId, newSurname);
+        return ResponseEntity.ok("Surname updated successfully.");
+    }
+
+
+    @PutMapping("/{userId}/update-password")
+    public ResponseEntity<String> updatePassword(@PathVariable Long userId, @RequestBody Map<String, String> body) {
+        String newPassword = body.get("newPassword");
+        String confirmPassword = body.get("confirmPassword");
+
+        if (!newPassword.equals(confirmPassword)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Passwords do not match.");
+        }
+
+        userService.updatePassword(userId, newPassword);
+        return ResponseEntity.ok("Password updated successfully.");
+    }
+
+    @PutMapping("/{userId}/update-address")
+    public ResponseEntity<String> updateAddress(@PathVariable Long userId, @RequestBody Map<String, String> body) {
+        String newAddress = body.get("address");
+        userService.updateAddress(userId, newAddress);
+        return ResponseEntity.ok("Address updated successfully.");
+    }
+
+    @GetMapping("/{userId}/followers")
+    public ResponseEntity<List<User>> getFollowers(@PathVariable Long userId) {
+        User user = userService.getUserById(userId);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.ok(user.getFollowers().stream().toList());
+    }
+
+    @GetMapping("/{userId}/following")
+    public ResponseEntity<List<User>> getFollowing(@PathVariable Long userId) {
+        User user = userService.getUserById(userId);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.ok(user.getFollowing().stream().toList());
+    }
+
 }

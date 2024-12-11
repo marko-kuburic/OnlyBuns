@@ -11,7 +11,9 @@ import PostList from './components/PostList';
 import ActivationPage from './components/ActivationPage';
 import HomePage from './components/HomePage';
 import UserProfile from './components/UserProfile';
-import ProtectedRoute from './components/ProtectedRoute'; // Import the ProtectedRoute component
+import ProtectedRoute from './components/ProtectedRoute';// Import the ProtectedRoute component
+import MyProfile from './components/MyProfile';// Import the MyProfile component
+import SettingsForm from './components/SettingsForm';// Import the Settings component
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -56,7 +58,10 @@ function App() {
                         <Route path="/register" element={<RegisterForm />} />
                         <Route path="/activate/:token" element={<ActivationPage />} />
                         <Route path="/profile/:userId" element={<UserProfile />} />
+                        <Route path="/myprofile/:userId" element={<MyProfile />} />
                         <Route path="/posts" element={<PostList />} />
+                        <Route path="/profile/:userId/settings" element={<SettingsForm />} />
+
 
                         {/* Protected Routes */}
                         <Route path="/create-post" element={

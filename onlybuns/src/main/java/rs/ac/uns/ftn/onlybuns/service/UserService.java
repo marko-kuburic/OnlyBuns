@@ -16,4 +16,8 @@ public interface UserService {
     User registerUser(User user);
     boolean loginUser(String rawPassword, String storedPassword);
     User findById(Long id);
+    public void updatePassword(Long userId, String newPassword);
+    public void updateAddress(Long userId, String newAddress);
+    public void updateName(Long userId, String newName);
+    public void updateSurname(Long userId, String newSurname);
 }

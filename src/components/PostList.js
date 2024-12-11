@@ -4,9 +4,10 @@ import jwt_decode from 'jwt-decode';
 import LoginPromptModal from './LoginPromptModal';
 import './PostList.css';
 
-function PostList({ posts = [] }) {
+function PostList({ posts = [], userId }) {
   const [usernames, setUsernames] = useState({});
   const [likes, setLikes] = useState({});
+  const [filteredPosts, setFilteredPosts] = useState([]);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [loginPromptAction, setLoginPromptAction] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -33,11 +34,20 @@ function PostList({ posts = [] }) {
     }
   }, []);
 
+  // Filter posts by userId if provided
   useEffect(() => {
-    if (posts.length === 0) return;
+    if (userId) {
+      setFilteredPosts(posts.filter((post) => post.userId === userId));
+    } else {
+      setFilteredPosts(posts);
+    }
+  }, [posts, userId]);
+
+  useEffect(() => {
+    if (filteredPosts.length === 0) return;
 
     const fetchUsernames = async () => {
-      const uniqueUserIds = [...new Set(posts.map((post) => post.userId))];
+      const uniqueUserIds = [...new Set(filteredPosts.map((post) => post.userId))];
       const usernamePromises = uniqueUserIds.map((userId) =>
           fetch(`http://localhost:8080/api/users/${userId}`)
               .then((response) => {
@@ -56,17 +66,16 @@ function PostList({ posts = [] }) {
     };
 
     fetchUsernames();
-  }, [posts]);
+  }, [filteredPosts]);
 
   const handleUsernameClick = (userId) => {
-    navigate(`/profile/${userId}`);
+    navigate(`/myprofile/${userId}`);
   };
 
   const handleLikeClick = async (postId) => {
     if (!isLoggedIn) {
       setLoginPromptAction(() => () => handleLikeClick(postId));
       setShowLoginPrompt(true);
-
       return;
     }
 
@@ -74,12 +83,12 @@ function PostList({ posts = [] }) {
       const response = await fetch(`http://localhost:8080/api/posts/${postId}/like`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           'Content-Type': 'application/json',
         },
       });
 
-      if (!response.ok) throw new Error("Failed to like post");
+      if (!response.ok) throw new Error('Failed to like post');
 
       setLikes((prevLikes) => ({
         ...prevLikes,
@@ -103,7 +112,7 @@ function PostList({ posts = [] }) {
 
   return (
       <div className="post-list-container">
-        {posts.map((post) => (
+        {filteredPosts.map((post) => (
             <div key={post.id} className="post-card">
               <div className="post-header">
                 <h3 onClick={() => handleUsernameClick(post.userId)}>
@@ -114,7 +123,7 @@ function PostList({ posts = [] }) {
 
               <div className="post-body">
                 <div className="post-image-container">
-                  <img src={`${post.imagePath}`} alt="Rabbit" className="post-image" />
+                  <img src={`${window.location.origin}/${post.imagePath}`} alt="Rabbit" className="post-image" />
                 </div>
 
                 <div className="post-content">
