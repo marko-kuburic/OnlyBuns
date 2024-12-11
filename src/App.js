@@ -13,7 +13,8 @@ import HomePage from './components/HomePage';
 import UserProfile from './components/UserProfile';
 import ProtectedRoute from './components/ProtectedRoute';// Import the ProtectedRoute component
 import MyProfile from './components/MyProfile';// Import the MyProfile component
-import SettingsForm from './components/SettingsForm';// Import the Settings component
+import SettingsForm from './components/SettingsForm'; // Import the Settings component
+import TrendsPage from './components/TrendsPage';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -63,6 +64,7 @@ function App() {
                         <Route path="/profile/:userId/settings" element={<SettingsForm />} />
 
 
+
                         {/* Protected Routes */}
                         <Route path="/create-post" element={
                             <ProtectedRoute isLoggedIn={isLoggedIn}>
@@ -71,7 +73,7 @@ function App() {
                         } />
                         <Route path="/trends" element={
                             <ProtectedRoute isLoggedIn={isLoggedIn}>
-                                <div>Trends</div>
+                                <TrendsPage />
                             </ProtectedRoute>
                         } />
                         <Route path="/nearby-posts" element={

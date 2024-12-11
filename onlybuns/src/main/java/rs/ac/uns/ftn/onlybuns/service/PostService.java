@@ -12,5 +12,6 @@ public interface PostService {
     void deletePost(Long id);
     List<Post> getPostsByUserId(Long userId);
     List<Post> getPostsByLatLong(Double latitude, Double longitude);
+    long getTotalPosts();
 }
 
