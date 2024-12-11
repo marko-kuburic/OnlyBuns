@@ -235,8 +235,7 @@ public class UserController {
         if (!newPassword.equals(confirmPassword)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Passwords do not match.");
         }
-
-        userService.updatePassword(userId, newPassword);
+        userService.updatePassword(userId, passwordEncoder.encode(newPassword));
         return ResponseEntity.ok("Password updated successfully.");
     }
 

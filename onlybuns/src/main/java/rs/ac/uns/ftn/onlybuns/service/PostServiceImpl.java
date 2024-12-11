@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.onlybuns.model.Post;
 import rs.ac.uns.ftn.onlybuns.repository.PostRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -59,4 +60,10 @@ public class PostServiceImpl implements PostService {
     public List<Post> getPostsByLatLong(Double lat, Double lon) {
         return postRepository.findByLatitudeAndLongitude(lat, lon);
     }
+
+    @Override
+    public long getTotalPosts() {
+        return postRepository.count();
+    }
+
 }

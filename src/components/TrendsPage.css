@@ -1,0 +1,45 @@
+.trends-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.trends-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 2rem;
+}
+
+.trends-section {
+    margin-bottom: 2rem;
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.trends-section h2 {
+    color: #007bff;
+    margin-bottom: 1rem;
+}
+
+.trends-section p {
+    color: #555;
+    margin: 0.5rem 0;
+}
+
+.trends-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.trends-section ul li {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: #f1f1f1;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
