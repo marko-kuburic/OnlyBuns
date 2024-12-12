@@ -20,4 +20,5 @@ public interface UserService {
     public void updateAddress(Long userId, String newAddress);
     public void updateName(Long userId, String newName);
     public void updateSurname(Long userId, String newSurname);
+    public void updateLastLogin(Long userId);
 }

@@ -52,6 +52,9 @@ public class User {
     @Column(name = "followers_count", nullable = false)
     private int followersCount = 0;
 
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
+
     @JsonIdentityInfo(
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id"
@@ -208,6 +211,14 @@ public class User {
     // Setter for following
     public void setFollowing(Set<User> following) {
         this.following = following;
+    }
+
+    public LocalDateTime getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
     }
 
     @Override
