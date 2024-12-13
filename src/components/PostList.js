@@ -11,6 +11,8 @@ function PostList({ posts = [], userId }) {
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [loginPromptAction, setLoginPromptAction] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [comments, setComments] = useState({}); // Store comments for each post
+  const [commentWarning, setCommentWarning] = useState(''); // New state for warning
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -110,6 +112,74 @@ function PostList({ posts = [], userId }) {
     alert(`Commenting is still in development.`);
   };
 
+  const handleCommentSubmit = (postId, commentContent) => {
+    const token = localStorage.getItem('authToken');
+    let userId = null;
+
+    if (token) {
+      const decodedToken = jwt_decode(token);
+      userId = decodedToken.userId;
+    }
+
+    if (!userId) {
+      console.error("User is not authenticated.");
+      return;
+    }
+
+    const commentData = {
+      userId: userId,
+      commentContent: commentContent,
+    };
+
+    fetch(`http://localhost:8080/api/posts/${postId}/comment`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(commentData),
+    })
+        .then((response) => {
+          if (response.ok) {
+            console.log('Comment submitted successfully');
+            // Fetch the updated comments list after submitting a comment
+            fetchComments(postId);
+
+            // Clear the comment form by resetting the textarea value
+            document.getElementById(`comment-input-${postId}`).value = '';
+            setCommentWarning(''); // Clear the warning after successful submission
+          } else {
+            throw new Error('Failed to submit comment');
+          }
+        })
+        .catch((error) => {
+          console.error('Error submitting comment:', error);
+          setCommentWarning('You exceeded maximum number(60) of comments per hour! Try again later.'); // Set the warning message
+        });
+  };
+
+  const fetchComments = (postId) => {
+    fetch(`http://localhost:8080/api/posts/${postId}/comments`)
+        .then((response) => response.json())
+        .then((commentsData) => {
+          // Update the comments state for this post
+          setComments((prevComments) => ({
+            ...prevComments,
+            [postId]: commentsData, // Update the comments for the specific postId
+          }));
+        })
+        .catch((error) => {
+          console.error('Error fetching comments:', error);
+        });
+  };
+
+  useEffect(() => {
+    // Fetch comments for all posts when the component is first rendered
+    filteredPosts.forEach((post) => {
+      fetchComments(post.id);
+    });
+  }, [filteredPosts]);
+
   return (
       <div className="post-list-container">
         {filteredPosts.map((post) => (
@@ -140,6 +210,39 @@ function PostList({ posts = [], userId }) {
               <i className="fas fa-comment"></i>
               <span>{post.commentsCount}</span>
             </span>
+              </div>
+
+              {/* Comment Form */}
+              {isLoggedIn && (
+                  <div className="comment-form">
+              <textarea
+                  placeholder="Add a comment..."
+                  id={`comment-input-${post.id}`}
+                  rows="4"
+                  cols="50"
+              />
+                    <button
+                        onClick={() => {
+                          const commentContent = document.getElementById(`comment-input-${post.id}`).value;
+                          handleCommentSubmit(post.id, commentContent);
+                        }}
+                    >
+                      Submit Comment
+                    </button>
+                    {commentWarning && (
+                        <p style={{ color: 'red', fontSize: '0.8rem' }}>{commentWarning}</p>
+                    )}
+                  </div>
+              )}
+
+              {/* Comment List */}
+              <div className="comment-list">
+                {(comments[post.id] || []).map((comment) => (
+                    <div key={comment.id} className="comment">
+                      <p><strong>{usernames[comment.userId] || 'Anonymous'}:</strong> {comment.content}</p>
+                      <p><small>{new Date(comment.createdAt).toLocaleTimeString()}</small></p>
+                    </div>
+                ))}
               </div>
             </div>
         ))}
