@@ -143,4 +143,12 @@ public class UserServiceImpl implements UserService {
     public User findById(Long id) {
         return userRepository.findById(id).orElse(null);
     }
+
+    public void updateLastLogin(Long userId) {
+        User user = getUserById(userId);
+        if (user != null) {
+            user.setLastLogin(LocalDateTime.now());
+            userRepository.save(user);
+        }
+    }
 }

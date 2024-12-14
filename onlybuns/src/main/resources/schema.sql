@@ -22,7 +22,8 @@ CREATE TABLE users (
                        activation_token VARCHAR(100),
                        activation_expires_at TIMESTAMP,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                       last_login TIMESTAMP
 );
 
 -- Table for Locations
@@ -80,9 +81,10 @@ CREATE TABLE ads (
 CREATE TABLE user_followers (
                                 user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
                                 follower_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-                                PRIMARY KEY (user_id, follower_id) -- Ensures unique follower relationships
+                                PRIMARY KEY (user_id, follower_id), -- Ensures unique follower relationships
+                                since TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
+/*
 -- Indexes for faster lookup
 CREATE INDEX idx_users_username ON users(username);
 CREATE INDEX idx_posts_user_id ON posts(user_id);

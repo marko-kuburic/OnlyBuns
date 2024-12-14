@@ -167,6 +167,8 @@ public class UserController {
         response.put("message", "Login successful");
         response.put("token", jwtToken);
 
+        userService.updateLastLogin(existingUser.getId());
+
         return ResponseEntity.ok(response);
     }
 

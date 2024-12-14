@@ -7,7 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import rs.ac.uns.ftn.onlybuns.model.Comment;
 import rs.ac.uns.ftn.onlybuns.model.Post;
+import rs.ac.uns.ftn.onlybuns.service.CommentService;
 import rs.ac.uns.ftn.onlybuns.service.PostService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +22,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -27,10 +30,12 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
+    private final CommentService commentService;
 
     @Autowired
-    public PostController(PostService postService) {
+    public PostController(PostService postService, CommentService commentService) {
         this.postService = postService;
+        this.commentService = commentService;
     }
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -138,17 +143,43 @@ public class PostController {
             return ResponseEntity.ok("Liked successfully");
         }
 
-        @PostMapping("/{postId}/comment")
-        public ResponseEntity<String> commentPost(@PathVariable Long postId, @RequestBody String comment) {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (auth == null || auth.getPrincipal() == null) {
-                return new ResponseEntity<>("Please log in to comment on posts.", HttpStatus.UNAUTHORIZED);
-            }
+    @PostMapping("/{postId}/comment")
+    public ResponseEntity<String> commentPost(
+            @PathVariable Long postId,
+            @RequestBody Map<String, Object> requestBody) {
 
-            Long userId = (Long) auth.getPrincipal();
-            // Process the comment for the user with userId
-            return ResponseEntity.ok("Comment added successfully");
+
+        Long userId = Long.valueOf(requestBody.get("userId").toString());
+        String commentContent = requestBody.get("commentContent").toString();
+
+        if (commentService.hasUserExceededComments(userId)) {
+            return new ResponseEntity<>("You have exceeded the allowed number of comments for this post", HttpStatus.BAD_REQUEST);
         }
+
+        // Create a new comment
+        Comment comment = new Comment();
+        comment.setUserId(userId);
+        comment.setContent(commentContent);
+        comment.setPostId(postId);
+        comment.setCreatedAt(LocalDateTime.now());
+
+        // Save the comment
+        commentService.saveComment(comment);
+
+        return new ResponseEntity<>("Comment saved", HttpStatus.CREATED);
     }
+    
+        @GetMapping("/{postId}/comments")
+        public ResponseEntity<List<Comment>> getCommentsForPost(@PathVariable Long postId) {
+            List<Comment> comments = commentService.findAllCommentsByPost(postId);
+            if (comments.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(comments, HttpStatus.OK);
+        }
+
+    
+
+}
 
 
