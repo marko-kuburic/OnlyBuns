@@ -1,5 +1,6 @@
 package rs.ac.uns.ftn.onlybuns.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.onlybuns.model.Post;
@@ -64,6 +65,20 @@ public class PostServiceImpl implements PostService {
     @Override
     public long getTotalPosts() {
         return postRepository.count();
+    }
+
+    @Transactional
+    public void likePost(Long postId) {
+
+        // Simulacija vremenskog kašnjenja za testiranje konkurencije
+        try {
+            Thread.sleep(2000); // Dodajte kašnjenje za simulaciju konflikta
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        postRepository.incrementLikes(postId);
+
     }
 
 }

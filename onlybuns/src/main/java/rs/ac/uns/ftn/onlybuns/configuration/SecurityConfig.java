@@ -43,8 +43,8 @@ public class SecurityConfig {
 
                         // Protect specific post interaction routes for authenticated users only
                         .requestMatchers(
-                                "/api/posts/*/like",
-                                // "/api/posts/*/comment",
+                                //"/api/posts/*/like",
+                                //"/api/posts/*/comment",
                                 "/api/posts/create",
                                 "/api/posts/update/*",
                                 "/api/posts/delete/*"

@@ -138,8 +138,7 @@ public class PostController {
                 return new ResponseEntity<>("Please log in to like posts.", HttpStatus.UNAUTHORIZED);
             }
 
-            Long userId = (Long) auth.getPrincipal();
-            // Process the like for the user with userId
+            postService.likePost(postId);
             return ResponseEntity.ok("Liked successfully");
         }
 

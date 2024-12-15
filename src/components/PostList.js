@@ -161,8 +161,27 @@ function PostList({ posts = [], userId }) {
   const fetchComments = (postId) => {
     fetch(`http://localhost:8080/api/posts/${postId}/comments`)
         .then((response) => response.json())
-        .then((commentsData) => {
-          // Update the comments state for this post
+        .then(async (commentsData) => {
+          // Create a map for userId and their associated usernames
+          const userIds = [...new Set(commentsData.map((comment) => comment.userId))];
+          const usernamePromises = userIds.map((userId) =>
+              fetch(`http://localhost:8080/api/users/${userId}`)
+                  .then((response) => {
+                    if (!response.ok) throw new Error(`Failed to fetch user ${userId}`);
+                    return response.json();
+                  })
+                  .then((userData) => {
+                    setUsernames((prev) => ({ ...prev, [userId]: userData.username }));
+                  })
+                  .catch((error) => {
+                    console.error(`Error fetching username for userId ${userId}:`, error);
+                  })
+          );
+
+          // Wait for all username requests to complete
+          await Promise.all(usernamePromises);
+
+          // Update comments state
           setComments((prevComments) => ({
             ...prevComments,
             [postId]: commentsData, // Update the comments for the specific postId
@@ -188,12 +207,12 @@ function PostList({ posts = [], userId }) {
                 <h3 onClick={() => handleUsernameClick(post.userId)}>
                   {usernames[post.userId] || 'Loading...'}
                 </h3>
-                <p>Posted: {new Date(post.createdAt).toLocaleDateString('en-GB', { dateStyle: 'full' })}</p>
+                <p>Posted: {new Date(post.createdAt).toLocaleDateString('en-GB', {dateStyle: 'full'})}</p>
               </div>
 
               <div className="post-body">
                 <div className="post-image-container">
-                  <img src={`${window.location.origin}/${post.imagePath}`} alt="Rabbit" className="post-image" />
+                  <img src={`${window.location.origin}/${post.imagePath}`} alt="Rabbit" className="post-image"/>
                 </div>
 
                 <div className="post-content">
@@ -230,7 +249,7 @@ function PostList({ posts = [], userId }) {
                       Submit Comment
                     </button>
                     {commentWarning && (
-                        <p style={{ color: 'red', fontSize: '0.8rem' }}>{commentWarning}</p>
+                        <p style={{color: 'red', fontSize: '0.8rem'}}>{commentWarning}</p>
                     )}
                   </div>
               )}
@@ -239,7 +258,9 @@ function PostList({ posts = [], userId }) {
               <div className="comment-list">
                 {(comments[post.id] || []).map((comment) => (
                     <div key={comment.id} className="comment">
-                      <p><strong>{usernames[comment.userId] || 'Anonymous'}:</strong> {comment.content}</p>
+                      <p>
+                        <strong>{usernames[comment.userId] || 'Loading...'}:</strong> {comment.content}
+                      </p>
                       <p><small>{new Date(comment.createdAt).toLocaleTimeString()}</small></p>
                     </div>
                 ))}
