@@ -13,5 +13,6 @@ public interface PostService {
     List<Post> getPostsByUserId(Long userId);
     List<Post> getPostsByLatLong(Double latitude, Double longitude);
     long getTotalPosts();
+    public void likePost(Long postId);
 }
 
